@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="googlebot" content="noindex, nofollow">
+<meta name="bingbot" content="noindex, nofollow">
+<title>IA Sprints — SL Mandic</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0f11;--surface:#161719;--surface2:#1c1e21;
+  --border:#252628;--text:#e8e9ea;--muted:#6b6d72;
+  --accent:#f0c040;--a2:#5b8fff;--a3:#6fda9e;--a4:#ff7c5b;--a5:#c084fc;
+  --tag-bg:#1e2024;--sw:264px;--ok:#4ade80;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;font-size:15px}
+
+/* ── SIDEBAR ── */
+.sb{width:var(--sw);min-width:var(--sw);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;z-index:10}
+.sb-hdr{padding:22px 18px 14px;border-bottom:1px solid var(--border)}
+.sb-logo{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px}
+.sb-title{font-size:14px;font-weight:700;line-height:1.3}
+.sb-sec{padding:12px 10px 4px}
+.sb-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:0 8px;margin-bottom:3px}
+.ni{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:6px;cursor:pointer;transition:background .12s;margin-bottom:1px;user-select:none}
+.ni:hover{background:var(--tag-bg)}
+.ni.active{background:var(--tag-bg)}
+.ni.active .nl{color:var(--text);font-weight:500}
+.nd{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.nl{font-size:12px;color:var(--muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ni.completed .nl{text-decoration:line-through;opacity:.5}
+.add-btn{margin:6px 10px 10px;display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;border:1px dashed var(--border);cursor:pointer;font-size:12px;color:var(--muted);background:transparent;transition:all .15s}
+.add-btn:hover{border-color:var(--muted);background:var(--tag-bg);color:var(--text)}
+
+/* ── MAIN ── */
+.mn{flex:1;overflow-y:auto}
+
+/* ── HERO ── */
+.ph{padding:28px 40px 20px;border-bottom:1px solid var(--border);position:relative}
+.ha{position:absolute;top:24px;right:36px;display:flex;gap:7px;align-items:center}
+.btn{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;padding:6px 13px;border-radius:5px;border:1px solid var(--border);cursor:pointer;transition:all .15s;background:transparent;color:var(--muted)}
+.btn:hover{background:var(--tag-bg);color:var(--text)}
+.btn-save{background:var(--text);color:var(--bg);border-color:var(--text)}
+.btn-save:hover{opacity:.88}
+.btn-del{color:var(--a4);border-color:rgba(255,124,91,.3)}
+.btn-del:hover{background:rgba(255,124,91,.08)}
+.btn-done{color:var(--ok);border-color:rgba(74,222,128,.3)}
+.btn-done:hover,.btn-done.on{background:rgba(74,222,128,.1)}
+.pt{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:11px;font-weight:500}
+.ptitle{font-size:22px;font-weight:700;line-height:1.2;margin-bottom:7px}
+.pprob{font-size:13px;color:var(--muted);max-width:660px;line-height:1.6}
+.mr{display:flex;gap:18px;margin-top:13px;flex-wrap:wrap}
+.mi{display:flex;flex-direction:column;gap:3px}
+.ml{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.mv{font-size:13px;font-weight:500;color:var(--text)}
+.rs{display:flex;gap:16px;flex-wrap:wrap;margin-top:13px;padding-top:13px;border-top:1px solid var(--border);align-items:center}
+.rg{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.chip{font-size:11px;padding:3px 10px;background:var(--tag-bg);border:1px solid var(--border);border-radius:100px;color:var(--text)}
+.done-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--ok);background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);padding:3px 10px;border-radius:100px}
+.dl-over{color:var(--a4)}.dl-soon{color:var(--accent)}
+.pbar{height:3px;background:var(--border);border-radius:10px;overflow:hidden;margin-top:12px;max-width:360px}
+.pfill{height:100%;background:var(--ok);border-radius:10px;transition:width .3s}
+
+/* ── BODY ── */
+.pb{padding:24px 40px 60px}
+.sec{margin-bottom:32px}
+.stitle{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.mvp-box{background:var(--surface);border:1px solid var(--border);border-left-width:3px;border-radius:8px;padding:14px 18px;font-size:13px;line-height:1.7;color:var(--text)}
+
+/* ── FLOW ── */
+.flow{display:flex;flex-direction:column}
+.fs{display:flex;gap:12px}
+.fl{display:flex;flex-direction:column;align-items:center;width:27px;flex-shrink:0}
+.sn{width:25px;height:25px;border-radius:50%;background:var(--tag-bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);flex-shrink:0;z-index:1;cursor:pointer;transition:all .15s;user-select:none}
+.sn:hover{border-color:var(--muted)}.sn.done{background:rgba(74,222,128,.15);border-color:rgba(74,222,128,.4);color:var(--ok)}
+.fline{width:1px;flex:1;background:var(--border);min-height:13px;margin:3px 0}
+.fs:last-child .fline{display:none}
+.fc{padding:1px 0 18px;flex:1;min-width:0}
+.fa{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;line-height:1.3}
+.fd{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:6px}
+.ftags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-family:'DM Mono',monospace;font-size:10px;padding:2px 7px;border-radius:4px;background:var(--tag-bg);border:1px solid var(--border);color:var(--muted)}
+.tag.tool{color:var(--a2);border-color:rgba(91,143,255,.25)}
+.tag.api{color:var(--a3);border-color:rgba(111,218,158,.25)}
+.tag.warn{color:var(--a4);border-color:rgba(255,124,91,.25)}
+.tag.ai{color:var(--accent);border-color:rgba(240,192,64,.25)}
+.sdone .fa{text-decoration:line-through;opacity:.5}.sdone .fd,.sdone .ftags{opacity:.35}
+
+/* ── CRITERIA ── */
+.criteria-list{display:flex;flex-direction:column;gap:7px}
+.crit-item{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:border-color .15s}
+.crit-item:hover{border-color:var(--muted)}
+.crit-item.crit-done{border-color:rgba(74,222,128,.25);background:rgba(74,222,128,.04)}
+.crit-check{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .15s}
+.crit-item.crit-done .crit-check{background:rgba(74,222,128,.2);border-color:rgba(74,222,128,.5);color:var(--ok)}
+.crit-text{font-size:13px;color:var(--text);line-height:1.5;flex:1}
+.crit-item.crit-done .crit-text{text-decoration:line-through;color:var(--muted)}
+.crit-progress{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.crit-prog-label{font-size:12px;color:var(--muted)}
+.crit-prog-n{font-family:'DM Mono',monospace;font-size:12px;color:var(--ok)}
+
+/* ── AREAS / BLOCKS ── */
+.ag{display:flex;flex-wrap:wrap;gap:7px}
+.ac{padding:5px 12px;background:var(--surface);border:1px solid var(--border);border-radius:100px;font-size:12px;color:var(--muted)}
+.bl-list{display:flex;flex-direction:column;gap:7px}
+.bl-item{display:flex;align-items:flex-start;gap:9px;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:13px;line-height:1.5;color:var(--muted)}
+.bl-item::before{content:"⚠";color:var(--a4);flex-shrink:0;margin-top:1px}
+
+/* ── OVERVIEW ── */
+.ov-h{padding:32px 40px 20px;border-bottom:1px solid var(--border)}
+.ov-lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.ov-h1{font-size:26px;font-weight:700;line-height:1.15;margin-bottom:8px}
+.ov-sub{font-size:13px;color:var(--muted);max-width:540px;line-height:1.6}
+.ov-stats{display:flex;gap:24px;margin-top:16px}
+.stat{display:flex;flex-direction:column;gap:2px}
+.stn{font-size:24px;font-weight:700}.stl{font-size:11px;color:var(--muted)}
+.ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:10px;padding:20px 40px 50px}
+.sc{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:16px;cursor:pointer;transition:border-color .15s,transform .12s}
+.sc:hover{border-color:var(--muted);transform:translateY(-1px)}
+.sc.sc-done{border-color:rgba(74,222,128,.25)}
+.sc-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.11em;text-transform:uppercase;padding:2px 7px;border-radius:3px;display:inline-block;margin-bottom:8px;font-weight:500}
+.sc-title{font-size:14px;font-weight:600;margin-bottom:5px;line-height:1.3}
+.sc-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.sc-foot{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.sc-badge{font-family:'DM Mono',monospace;font-size:9px;padding:2px 6px;border-radius:3px;background:var(--tag-bg);color:var(--muted);border:1px solid var(--border)}
+.add-card{border-style:dashed;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:120px;gap:6px}
+
+/* ── MODAL ── */
+.ov-modal{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .18s}
+.ov-modal.open{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:11px;width:540px;max-width:94vw;max-height:86vh;overflow-y:auto;padding:24px 26px}
+.mh{font-size:17px;font-weight:700;margin-bottom:16px}
+.mfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+
+/* ── FORMS ── */
+.field{margin-bottom:13px}
+.fl-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block}
+.fi{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 11px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color .15s}
+.fi:focus{border-color:var(--muted)}
+.fi-ta{min-height:62px;resize:vertical;line-height:1.55}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cpicker{display:flex;gap:7px;flex-wrap:wrap}
+.cdot{width:21px;height:21px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .12s}
+.cdot:hover{transform:scale(1.18)}.cdot.sel{border-color:white}
+
+/* ── PEOPLE DROPDOWN ── */
+.people-picker{position:relative}
+.pp-trigger{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 11px;color:var(--text);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;transition:border-color .15s;min-height:38px;flex-wrap:wrap;gap:4px}
+.pp-trigger:hover{border-color:var(--muted)}
+.pp-trigger.open{border-color:var(--muted)}
+.pp-arrow{color:var(--muted);font-size:10px;flex-shrink:0;margin-left:4px}
+.pp-placeholder{color:var(--muted);font-size:13px}
+.pp-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface2);border:1px solid var(--border);border-radius:7px;z-index:200;max-height:220px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.pp-search{padding:8px 10px;border-bottom:1px solid var(--border)}
+.pp-search input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:6px 9px;color:var(--text);font-size:12px;outline:none;font-family:'DM Sans',sans-serif}
+.pp-option{display:flex;align-items:center;gap:9px;padding:9px 12px;cursor:pointer;transition:background .12s;font-size:13px}
+.pp-option:hover{background:var(--tag-bg)}
+.pp-option.selected{color:var(--ok)}
+.pp-check{width:15px;height:15px;border-radius:3px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;transition:all .12s}
+.pp-option.selected .pp-check{background:rgba(74,222,128,.2);border-color:rgba(74,222,128,.5);color:var(--ok)}
+.selected-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 8px;background:var(--tag-bg);border:1px solid var(--border);border-radius:100px;color:var(--text)}
+.selected-chip .rm{cursor:pointer;color:var(--muted);font-size:12px;line-height:1}
+.selected-chip .rm:hover{color:var(--a4)}
+
+/* ── EDIT SECTIONS ── */
+.es{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:12px}
+.es-lbl{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.e-step{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:12px;margin-bottom:9px}
+.e-step-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.e-step-n{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)}
+.sbtn{font-size:10px;padding:3px 8px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace;transition:all .12s}
+.sbtn:hover{background:var(--tag-bg);color:var(--text)}
+.sbtn.del:hover{color:var(--a4);border-color:rgba(255,124,91,.3)}
+.add-row-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);border:1px dashed var(--border);border-radius:5px;padding:6px 11px;cursor:pointer;background:transparent;transition:all .12s;font-family:'DM Sans',sans-serif}
+.add-row-btn:hover{border-color:var(--muted);color:var(--text);background:var(--tag-bg)}
+.b-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px}
+.crit-edit-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px}
+.del-btn{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px 4px;line-height:1;transition:color .12s;flex-shrink:0;margin-top:7px}
+.del-btn:hover{color:var(--a4)}
+.edit-bar{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:11px}
+
+/* ── TRANSVERSAL ── */
+.tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.tc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:13px 15px}
+.t-icon{font-size:18px;margin-bottom:6px}.t-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px}.t-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.hl-box{background:rgba(240,192,64,.06);border:1px solid rgba(240,192,64,.2);border-radius:7px;padding:12px 16px;font-size:13px;color:var(--text);line-height:1.6}
+.divider{height:1px;background:var(--border);margin:24px 0}
+
+/* ── ENABLER CARDS ── */
+.en-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;margin-bottom:14px}
+.en-card{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:18px 20px;transition:border-color .15s}
+.en-card.en-done{border-color:rgba(74,222,128,.25);opacity:.7}
+.en-card-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
+.en-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+.en-name{font-size:14px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:4px}
+.en-desc{font-size:12px;color:var(--muted);line-height:1.55}
+.en-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.en-resp{display:flex;flex-wrap:wrap;gap:4px}
+.en-chip{font-size:11px;padding:2px 8px;background:var(--tag-bg);border:1px solid var(--border);border-radius:100px;color:var(--text)}
+.en-actions{display:flex;gap:6px;flex-shrink:0}
+.en-btn{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.07em;text-transform:uppercase;padding:4px 10px;border-radius:4px;border:1px solid var(--border);cursor:pointer;background:transparent;color:var(--muted);transition:all .12s}
+.en-btn:hover{background:var(--tag-bg);color:var(--text)}
+.en-btn.ok{color:var(--ok);border-color:rgba(74,222,128,.3)}
+.en-btn.ok.on,.en-btn.ok:hover{background:rgba(74,222,128,.1)}
+.en-btn.danger:hover{color:var(--a4);border-color:rgba(255,124,91,.3)}
+.en-steps{margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.en-step-row{display:flex;gap:10px;align-items:flex-start;padding:6px 0;cursor:pointer}
+.en-step-row:not(:last-child){border-bottom:1px solid rgba(37,38,40,.7)}
+.en-snum{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);width:20px;flex-shrink:0;padding-top:2px;user-select:none}
+.en-stext{font-size:12px;color:var(--muted);line-height:1.5;flex:1}
+.en-step-row.sdone .en-snum{color:var(--ok)}
+.en-step-row.sdone .en-stext{text-decoration:line-through;opacity:.4}
+.en-scheck{font-size:12px;flex-shrink:0;padding-top:1px;color:var(--border);transition:color .12s}
+.en-step-row:hover .en-scheck{color:var(--muted)}
+.en-step-row.sdone .en-scheck{color:var(--ok)}
+.icon-picker{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.icon-opt{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:6px;border:1px solid var(--border);cursor:pointer;font-size:16px;transition:all .12s;background:var(--bg)}
+.icon-opt:hover{border-color:var(--muted)}.icon-opt.sel{border-color:var(--a5);background:rgba(192,132,252,.1)}
+.en-edit-step{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:11px;margin-bottom:8px}
+.en-edit-step-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+
+/* ── SAVE INDICATOR ── */
+.si{position:fixed;bottom:16px;right:20px;font-family:'DM Mono',monospace;font-size:10px;padding:5px 12px;background:var(--surface);border:1px solid var(--border);border-radius:100px;color:var(--ok);opacity:0;transition:opacity .3s;pointer-events:none;z-index:50}
+.si.show{opacity:1}
+
+/* ── OVERVIEW TABS ── */
+.ov-tabs{display:flex;gap:2px;margin-top:20px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:3px;width:fit-content}
+.ov-tab{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border-radius:5px;cursor:pointer;color:var(--muted);transition:all .15s;user-select:none}
+.ov-tab.active{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+
+/* ── PROGRESS TABLE ── */
+.pt-wrap{padding:20px 40px 60px}
+.pt-table{width:100%;border-collapse:collapse}
+.pt-table th{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 14px 10px;text-align:left;white-space:nowrap;font-weight:400}
+.pt-table th:first-child{padding-left:0}
+.pt-row{border-top:1px solid var(--border);cursor:pointer;transition:background .12s}
+.pt-row:hover td{background:rgba(255,255,255,.02)}
+.pt-row.done-row td{opacity:.55}
+.pt-table td{padding:13px 14px;vertical-align:middle}
+.pt-table td:first-child{padding-left:0}
+.pt-sprint-name{display:flex;align-items:center;gap:10px}
+.pt-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.pt-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
+.pt-area{font-size:11px;color:var(--muted);margin-top:2px}
+.pt-resp{display:flex;flex-wrap:wrap;gap:4px}
+.pt-chip{font-size:11px;padding:2px 8px;background:var(--tag-bg);border:1px solid var(--border);border-radius:100px;color:var(--text);white-space:nowrap}
+.pt-deadline{font-size:12px;font-weight:500;white-space:nowrap}
+.pt-no-dl{font-size:12px;color:var(--muted)}
+.pt-prog-wrap{display:flex;flex-direction:column;gap:5px;min-width:120px}
+.pt-prog-row{display:flex;align-items:center;gap:7px}
+.pt-prog-lbl{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);width:42px;flex-shrink:0}
+.pt-bar{flex:1;height:5px;background:var(--border);border-radius:10px;overflow:hidden}
+.pt-bar-fill{height:100%;border-radius:10px;transition:width .4s}
+.pt-pct{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);width:28px;text-align:right;flex-shrink:0}
+.pt-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:100px;white-space:nowrap}
+.pt-status.st-done{color:var(--ok);background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25)}
+.pt-status.st-wip{color:var(--accent);background:rgba(240,192,64,.08);border:1px solid rgba(240,192,64,.2)}
+.pt-status.st-idle{color:var(--muted);background:var(--tag-bg);border:1px solid var(--border)}
+.pt-status.st-over{color:var(--a4);background:rgba(255,124,91,.08);border:1px solid rgba(255,124,91,.2)}
+
+/* ── LOADING ── */
+.loading{display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:'DM Mono',monospace;font-size:12px;flex-direction:column;gap:12px}
+.spin{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--muted);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+
+/* ── LOGIN ── */
+.login-screen{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center}
+.login-box{width:340px;padding:36px 32px;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;gap:0}
+.login-logo{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
+.login-title{font-size:20px;font-weight:700;margin-bottom:28px;line-height:1.2}
+.login-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block}
+.login-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .15s;margin-bottom:14px;letter-spacing:.08em}
+.login-input:focus{border-color:var(--muted)}
+.login-btn{width:100%;background:var(--text);color:var(--bg);border:none;border-radius:6px;padding:11px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:opacity .15s;font-weight:500}
+.login-btn:hover{opacity:.88}
+.login-err{font-size:12px;color:var(--a4);margin-top:10px;text-align:center;min-height:18px;font-family:'DM Mono',monospace}
+.login-shake{animation:shake .35s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+</style>
+</head>
+<body>
+<nav class="sb" id="sb"></nav>
+<main class="mn" id="mn"><div class="loading"><div class="spin"></div>Carregando...</div></main>
+<div class="ov-modal" id="ovm"><div class="modal" id="mb"></div></div>
+<div class="si" id="si">Salvo ✓</div>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box" id="loginBox">
+    <div class="login-logo">IA Sprints · SL Mandic</div>
+    <div class="login-title">Área Restrita</div>
+    <label class="login-label">Senha de acesso</label>
+    <input class="login-input" id="loginInput" type="password" placeholder="••••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// CONFIGURAÇÃO — SUBSTITUA AQUI
+// ══════════════════════════════════════
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxUwCa3kXgWPX3oPX3W-07v8MyDmQdDtaD3OUAIKNkQtAVuRYy6ndFNgST5dWiZCtjXcg/exec';
+// TOKEN não é mais definido aqui — preenchido em runtime após login
+let TOKEN = '';
+
+// ══════════════════════════════════════
+// PESSOAS
+// ══════════════════════════════════════
+const PEOPLE = [
+  'Sala Comunicação',
+  'Mariana Barbosa de Araujo Leite',
+  'Livia Goncalves da Silva Oliveira',
+  'Eldina Fonseca Bueno',
+  'Raul Marques Pardinho',
+  'Mauricio Vieira Benetti',
+  'Carolina Loyola da Silva Monteiro',
+  'Ana Gabriela Ribeiro Akl',
+  'Gabriela Cruz Macedo Pradela',
+  'Anna Beatriz Cordeiro Karas',
+  'Guilherme Barbosa Maia',
+  'Andersson Ulisses de Souza',
+  'Bruno Henrique Alves',
+  'Jose Paulo Teixeira Junior',
+  'Mateus Fachine Dato',
+  'Matheus Henrique de Melo Santos',
+  'Gustavo Oliveira Ribeiro Marujo',
+  'Silvia Balbo Messias',
+  'Murilo Diegues',
+  'Gabriela Victorelli Scanavini',
+  'Gabriel Saute',
+  'Marcel Henrique Martins Silva',
+  'Gabriel Botim',
+];
+
+// ══════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════
+const uid  = () => 's_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
+const cid  = () => 'c_'+Date.now()+'_'+Math.random().toString(36).slice(2,5);
+const pid  = () => 'p_'+Date.now()+'_'+Math.random().toString(36).slice(2,5);
+const esc  = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function shortName(full) {
+  const parts = full.trim().split(' ');
+  if (parts.length === 1) return parts[0];
+  return parts[0] + ' ' + parts[parts.length-1];
+}
+
+function tagType(l) {
+  l = l.toLowerCase();
+  if (/gpt|claude|whisper|firefly|dall|midjourney|gemini|openai|llm/.test(l)) return 'ai';
+  if (/\bapi\b|webhook|rest\b|endpoint|sdk/.test(l)) return 'api';
+  if (/⚠|obrigatório|lgpd|revisão humana/.test(l)) return 'warn';
+  return 'tool';
+}
+
+function fmtDate(d) {
+  if (!d) return null;
+  const dt = new Date(d+'T12:00:00'), now = new Date();
+  const diff = (dt - now) / 86400000;
+  const str = dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
+  return {str, cls: diff < 0 ? 'dl-over' : diff <= 7 ? 'dl-soon' : ''};
+}
+
+function stepPct(steps) {
+  if (!steps.length) return 0;
+  return Math.round(steps.filter(s=>s.done).length / steps.length * 100);
+}
+function critPct(criteria) {
+  if (!criteria||!criteria.length) return 0;
+  return Math.round(criteria.filter(c=>c.done).length / criteria.length * 100);
+}
+
+const COLORS = ['#f0c040','#5b8fff','#6fda9e','#ff7c5b','#38d9d9','#f472b6','#c084fc','#fb923c'];
+
+// ══════════════════════════════════════
+// DEFAULT DATA  (seed — used only when bin is empty)
+// ══════════════════════════════════════
+function defCriteria(texts) {
+  return texts.map(t=>({id:cid(), text:t, done:false}));
+}
+
+function defaults() { return JSON.parse(JSON.stringify(SEED_DATA.sprints)); }
+function defaultEnablers() { return JSON.parse(JSON.stringify(SEED_DATA.enablers)); }
+
+const SEED_DATA = {"sprints":[{"id":"s_1776966014671_pjtg","color":"#f0c040","area":"Sprint 1 · Marketing / Martech","title":"Fábrica de Criativos Estáticos com IA","prob":"Baixa velocidade na produção de peças estáticas para campanhas — gargalo em design, revisões e adaptações por formato/canal.","mvp":"Criar um fluxo onde o time de marketing preenche um brief padronizado e a IA gera automaticamente variações de copy + imagem + montagem final em templates aprovados pelo design — exportando arquivos prontos por canal sem intervenção manual para peças padrão.","time":"3–4 semanas","complex":"Média","impact":"Alto","resp":["Anna Beatriz Cordeiro Karas"],"deadline":"","done":false,"criteria":[{"id":"c_1776966014671_i8d","text":"10 criativos estáticos gerados via fluxo automatizado em produção","done":false},{"id":"c_1776966014671_n3o","text":"3 formatos diferentes suportados (feed, stories, display)","done":false},{"id":"c_1776966014671_bz3","text":"Tempo de produção por peça < 15 min (do brief ao arquivo final)","done":false},{"id":"c_1776966014671_xc5","text":"Templates aprovados pelo design disponíveis para ao menos 2 campanhas","done":false}],"steps":[{"id":"p_1776966014671_412","action":"Brief estruturado de entrada","detail":"Time de marketing preenche formulário com: produto, campanha, tom de voz, público-alvo, CTA, formatos desejados e referências visuais. Pode ser via Google Forms, Typeform ou Notion Database.","tools":"Notion / Google Forms, Make / Zapier (trigger)","done":false},{"id":"p_1776966014671_p76","action":"Geração de variações de copy com IA","detail":"O brief é enviado via API para GPT-4o ou Claude, que retorna 3–5 variações de headline + texto + CTA por formato. O prompt é versionado e controlado pelo time de copy/marketing para manter brand voice.","tools":"GPT-4o API, Claude API, Prompt versionado no Git","done":false},{"id":"p_1776966014671_r81","action":"Geração de imagens (quando não há asset)","detail":"Caso não haja imagem aprovada no banco, a IA gera opções usando Adobe Firefly (mais seguro para uso comercial), Midjourney via API, ou DALL-E 3. Imagens geradas passam por revisão humana antes de entrar no fluxo.","tools":"Adobe Firefly API, DALL-E 3, Revisão humana obrigatória","done":false},{"id":"p_1776966014671_v9s","action":"Montagem automática via templates","detail":"Copy + imagem aprovada são injetados em templates de Canva (via Canva API) ou Adobe Express. Templates são criados e versionados pelo design — a IA só popula os campos dinâmicos.","tools":"Canva API (Brand Kit), Adobe Express API, REST API webhook","done":false},{"id":"p_1776966014671_aiy","action":"Exportação por formato/canal","detail":"O sistema exporta automaticamente as peças nos tamanhos corretos: 1080×1080 (feed), 1080×1920 (stories), 300×250 e 728×90 (display). Arquivos nomeados com padrão de nomenclatura definido.","tools":"Export API (PNG/JPG), Google Drive / DAM","done":false},{"id":"p_1776966014671_44u","action":"Aprovação e envio para mídia","detail":"Link de preview enviado via Slack ou e-mail para aprovação. Após OK, as peças são publicadas nas contas de mídia via API ou movidas para pasta de mídia no Drive.","tools":"Meta Marketing API, Google Ads API, Slack Webhook","done":false}],"areas":"Marketing, Martech, Design (setup dos templates), Mídia / Tráfego, TI (APIs)","blocks":["Templates precisam ser criados e aprovados pelo design antes do fluxo funcionar — pré-requisito crítico.","Imagens geradas por IA podem ter inconsistências de brand — revisão humana obrigatória no MVP.","Canva API tem limitações de customização — avaliar Adobe Express ou solução própria para casos avançados.","Prompt de copy precisa de curadoria contínua — resultado depende da qualidade do brief de entrada."]},{"id":"s_1776966014671_r9ml","color":"#5b8fff","area":"Sprint 2 · Marketing / TI","title":"Landing Pages de Conversão em Escala","prob":"Alta demanda por páginas de conversão e lentidão no processo de criação, aprovação e deploy — cada página exige ciclo longo de desenvolvimento.","mvp":"Criar um sistema de geração de landing pages a partir de um brief padronizado: a IA gera copy completo e estrutura de seções, mapeada para blocos de uma biblioteca de componentes pré-aprovados. Resultado: página pronta para deploy via CMS sem desenvolvimento do zero.","time":"2 semanas","complex":"Alta","impact":"Alto","resp":["Gabriel Botim"],"deadline":"","done":false,"criteria":[{"id":"c_1776966014671_q87","text":"5 landing pages publicadas via fluxo automatizado","done":false},{"id":"c_1776966014671_863","text":"Tempo de criação + aprovação < 2 horas por página","done":false},{"id":"c_1776966014671_xfs","text":"100% das páginas com pixel, UTM e integração CRM funcionando","done":false},{"id":"c_1776966014671_quy","text":"Taxa de conversão das páginas geradas ≥ benchmark atual","done":false}],"steps":[{"id":"p_1776966014671_g09","action":"Brief de página estruturado","detail":"Formulário com: objetivo da página, produto/serviço, público, CTA principal, provas sociais disponíveis, FAQs, tom de voz.","tools":"Notion / Typeform, Trigger via webhook","done":false},{"id":"p_1776966014671_bfw","action":"IA gera estrutura e copy completo","detail":"Claude ou GPT-4o recebe o brief e retorna JSON estruturado com: seções da página, copy de cada bloco, meta title e description.","tools":"Claude API, GPT-4o API, Output: JSON estruturado","done":false},{"id":"p_1776966014671_za0","action":"Mapeamento para biblioteca de componentes","detail":"O JSON é mapeado para blocos pré-criados na plataforma de CMS (Webflow, WordPress, Unbounce ou Framer). Cada tipo de seção tem um bloco correspondente — a IA popula o conteúdo.","tools":"Webflow CMS API, WordPress REST API, Unbounce API","done":false},{"id":"p_1776966014671_u2x","action":"Preview e revisão humana","detail":"A página é gerada em modo draft/preview. Link é enviado para aprovação do solicitante. Ajustes pontuais podem ser feitos no CMS diretamente — sem necessidade de dev.","tools":"Preview link automático, Gate de aprovação obrigatório","done":false},{"id":"p_1776966014671_wo3","action":"Deploy e integração com tracking","detail":"Página publicada com UTMs automáticos, pixel do Meta, tag do GA4, e integração com CRM via webhook. Data layer configurado automaticamente a partir do template.","tools":"GTM Data Layer, CRM Webhook, Meta Pixel / GA4","done":false}],"areas":"Marketing, Martech, TI / Dev, Design (biblioteca de componentes), Vendas","blocks":["Biblioteca de componentes precisa ser criada e aprovada antes — pré-requisito de design e dev.","Integração com CRM e data layer precisa de documentação de endpoints.","Copy gerado por IA para produtos complexos pode exigir revisão especializada.","Plataforma de CMS define muito a complexidade — Webflow tem API mais robusta."]},{"id":"s_1776966014671_k9q9","color":"#6fda9e","area":"Sprint 3 · Mídia / Martech","title":"Análise Inteligente de Campanhas","prob":"Alta carga manual de análise de indicadores — dados fragmentados por plataforma. Oportunidades de otimização são perdidas por falta de visibilidade consolidada.","mvp":"Conectar as principais plataformas de mídia a um repositório central de dados. Rodar IA sobre esse consolidado para gerar insights e alertas de otimização automaticamente.","time":"2 semanas","complex":"Alta","impact":"Muito Alto","resp":["Guilherme Barbosa Maia"],"deadline":"","done":false,"criteria":[{"id":"c_1776966014671_1ot","text":"Dados de Meta + Google consolidados em um único dashboard","done":false},{"id":"c_1776966014671_545","text":"Relatório diário de insights gerado automaticamente por IA","done":false},{"id":"c_1776966014671_ekj","text":"Ao menos 3 alertas de anomalia configurados e funcionando","done":false},{"id":"c_1776966014671_bsi","text":"Redução de 50% no tempo semanal gasto em análise manual","done":false}],"steps":[{"id":"p_1776966014671_5mw","action":"Ingestão de dados via APIs de mídia","detail":"Conectores para as principais plataformas puxam dados de campanha, ad set, anúncio e criativo: impressões, cliques, CPM, CPC, CTR, conversões, ROAS, frequência. Schedule diário.","tools":"Meta Marketing API, Google Ads API, TikTok Ads API, Supermetrics / Funnel.io","done":false},{"id":"p_1776966014671_s3q","action":"Armazenamento centralizado","detail":"Dados de todas as plataformas são normalizados e armazenados em um data warehouse. BigQuery é a recomendação por custo e integração nativa com Looker Studio.","tools":"BigQuery, dbt (transformação), Cloud Scheduler","done":false},{"id":"p_1776966014671_h37","action":"Dashboard visual consolidado","detail":"Looker Studio (ou Metabase) conectado ao BigQuery — visão única com filtros por canal, campanha, criativo, audiência e período.","tools":"Looker Studio, Metabase","done":false},{"id":"p_1776966014671_kcy","action":"IA analisa e gera insights diários","detail":"Job diário envia snapshot de dados para GPT-4o ou Claude com prompt especializado: identifica criativos com fadiga, oportunidades de escala, audiências com underperformance.","tools":"GPT-4o API, Claude API, Prompt especializado em mídia","done":false},{"id":"p_1776966014671_12n","action":"Alertas e distribuição automática","detail":"Insights enviados via Slack ou email com resumo diário. Alertas em tempo real para anomalias: CPA subindo >30% em 3h, criativo com frequência >3.5.","tools":"Slack API / Webhook, SendGrid / Email","done":false}],"areas":"Mídia / Tráfego, Martech, Marketing, TI (infraestrutura de dados)","blocks":["APIs de plataformas têm limites de requisição — planejar schedule com rate limiting e cache inteligente.","Qualidade do insight da IA depende da padronização de UTMs e naming conventions.","BigQuery tem custo variável — estimar volume de dados antes para evitar surpresas de billing.","IA pode gerar insights genéricos sem contexto de negócio — prompt precisa incluir metas e benchmarks."]},{"id":"s_1776966014671_2ea0","color":"#ff7c5b","area":"Sprint 4 · Vendas / CX","title":"Auditoria de Performance dos Consultores","prob":"Consultores de vendas operam 100% pelo WhatsApp (via Zendesk). Não existe visibilidade estruturada da performance individual — qualidade do atendimento e efetividade na conversão são opacos.","mvp":"Extrair conversas do Zendesk via API e processá-las com IA para gerar um scorecard individual por consultor: análise de qualidade da abordagem, tempo de resposta, taxa de follow-up e alinhamento com o script de vendas.","time":"4–6 semanas","complex":"Alta","impact":"Muito Alto","resp":[],"deadline":"","done":false,"criteria":[{"id":"c_1776966014671_w5d","text":"Scorecard automático gerado para 100% dos consultores ativos","done":false},{"id":"c_1776966014671_n93","text":"Rubric de avaliação validado e aprovado pelo time de Vendas","done":false},{"id":"c_1776966014671_jlu","text":"Dashboard de ranking e coaching acessível à gestão","done":false},{"id":"c_1776966014671_t8d","text":"Redução de 80% no tempo de auditoria manual de conversas","done":false}],"steps":[{"id":"p_1776966014671_4ge","action":"Extração de tickets do Zendesk","detail":"Zendesk API exporta tickets encerrados com metadados: consultor responsável, timestamps de mensagens, lead associado, status de venda. Rodar diariamente.","tools":"Zendesk REST API, /tickets /ticket_events, Python schedule diário","done":false},{"id":"p_1776966014671_ukg","action":"Pré-processamento e anonimização","detail":"Mensagens são limpas (remoção de dados sensíveis de clientes — LGPD), agrupadas por consultor e normalizadas. Dados de cliente são hasheados ou removidos.","tools":"LGPD — anonimização obrigatória, Python / Pandas","done":false},{"id":"p_1776966014671_uhh","action":"Análise de conversas com IA","detail":"Claude ou GPT-4o analisa cada conversa com rubric definido pela gestão de vendas: (1) Saudação e rapport, (2) Identificação de necessidade, (3) Apresentação da solução, (4) Tratamento de objeções, (5) CTA e fechamento, (6) Follow-up.","tools":"Claude API, GPT-4o API, Rubric versionado pelo time de Vendas","done":false},{"id":"p_1776966014671_4kc","action":"Cálculo de métricas operacionais","detail":"Além da qualidade, calcular métricas objetivas: tempo médio de primeira resposta, volume de tickets, taxa de conversão cruzando com dados de CRM.","tools":"Zendesk Metrics API, CRM API (cruzamento)","done":false},{"id":"p_1776966014671_bmc","action":"Dashboard de coaching e ranking","detail":"Interface com: ranking de consultores por período, scorecard individual (radar chart por dimensão), exemplos de boas conversas vs. conversas com oportunidade de melhoria.","tools":"Looker Studio / Metabase, Google Sheets (MVP rápido)","done":false}],"areas":"Vendas, CX, Retenção, RH / Treinamento, Jurídico (LGPD), Martech / TI","blocks":["LGPD: conversas com clientes precisam ter anonimização cuidadosa — envolver jurídico antes de iniciar a sprint.","Rubric de avaliação precisa ser construído com o time de vendas.","Resistência dos consultores ao monitoramento — comunicação interna e transparência é crítica.","Cruzamento com CRM para taxa de conversão real depende de IDs de lead linkados nos tickets do Zendesk."]},{"id":"s_1776966014671_biz6","color":"#38d9d9","area":"Sprint 5 · Martech / CRM","title":"Higienização e Deduplicação de Leads","prob":"Bases de leads despadronizadas e com duplicidades geram disparos incorretos, mensagens repetidas, alta carga operacional e prejudicam segmentações.","mvp":"Criar um pipeline automatizado que extrai a base de leads do CRM, aplica limpeza (normalização de campos), deduplicação inteligente (fuzzy matching + regras de negócio) e enriquecimento básico.","time":"2–3 semanas","complex":"Média","impact":"Alto","resp":["Andersson Ulisses de Souza"],"deadline":"","done":false,"criteria":[{"id":"c_1776966014671_znq","text":"Base saneada com < 2% de duplicatas","done":false},{"id":"c_1776966014671_k88","text":"100% dos campos de telefone e e-mail padronizados","done":false},{"id":"c_1776966014671_qyv","text":"Regras de deduplicação nativa ativas no CRM para novos leads","done":false},{"id":"c_1776966014671_i15","text":"Validação em tempo real funcionando nos formulários de captura","done":false}],"steps":[{"id":"p_1776966014671_f4v","action":"Extração da base atual","detail":"Exportar todos os leads do CRM via API ou CSV. Mapear todos os campos existentes: nome, e-mail, telefone, CPF, fonte, data de entrada, status, consultor responsável.","tools":"CRM API (HubSpot / RD / SF), Export CSV como fallback","done":false},{"id":"p_1776966014671_npl","action":"Normalização de campos","detail":"Script Python padroniza: telefones (formato E.164), e-mails (lowercase + remoção de espaços), nomes (capitalização correta), campos de estado/cidade.","tools":"Python Pandas, phonenumbers lib, GPT-4o (casos ambíguos)","done":false},{"id":"p_1776966014671_h73","action":"Deduplicação inteligente","detail":"Fuzzy matching por e-mail (exato) e telefone. Para casos ambíguos, GPT-4o avalia o par e sugere merge ou manutenção. Regra: manter o registro mais antigo com os dados mais completos.","tools":"RapidFuzz (Python), GPT-4o API (ambiguidades), Revisão humana para merges incertos","done":false},{"id":"p_1776966014671_2fl","action":"Enriquecimento e classificação","detail":"Validar e-mails ativos (API de validação). Classificar leads por completude de dados (score 0–100). Identificar leads mortos para quarentena.","tools":"Hunter.io / ZeroBounce (e-mail validation), Score de completude","done":false},{"id":"p_1776966014671_ljq","action":"Reimportação e regras de entrada","detail":"Base saneada é reimportada no CRM. Criar regras de deduplicação nativa para novos leads. Implementar validação no formulário de captura.","tools":"CRM API (upsert), Dedup rules no CRM, Validação em tempo real no form","done":false}],"areas":"Martech / CRM, Marketing, Vendas, TI","blocks":["Merge de leads duplicados pode apagar histórico de interações — definir política de merge com TI e jurídico antes.","CRM pode não ter API de upsert nativa — verificar capacidade antes.","Sem regras de entrada, a base volta a se degradar em semanas.","Volume grande de leads pode gerar custo alto de APIs de validação."]},{"id":"s_1776966014671_9qen","color":"#f472b6","area":"Sprint 6 · Marketing / Comunicação","title":"Maturidade em SEO com IA","prob":"Baixa maturidade em SEO — sem processo estruturado de pesquisa de palavras-chave, produção de conteúdo otimizado ou monitoramento de resultados.","mvp":"Criar um fluxo de produção de conteúdo SEO assistido por IA: pesquisa de palavras-chave com dados reais → briefing automático → geração de rascunho com IA → revisão humana → publicação.","time":"3–4 semanas","complex":"Média","impact":"Médio-Alto","resp":[],"deadline":"","done":false,"criteria":[{"id":"c_1776966014671_ab4","text":"Auditoria técnica de SEO concluída com prioridades mapeadas","done":false},{"id":"c_1776966014671_djv","text":"6 artigos publicados com fluxo assistido por IA","done":false},{"id":"c_1776966014671_nln","text":"Ao menos 5 palavras-chave estratégicas na primeira página do Google (em 90 dias)","done":false},{"id":"c_1776966014671_zsj","text":"Dashboard de monitoramento de posições ativo e atualizado","done":false}],"steps":[{"id":"p_1776966014671_ncc","action":"Auditoria técnica de SEO (one-time)","detail":"Rodar Screaming Frog ou Sitebulb no site atual. Identificar problemas técnicos críticos: páginas sem meta, imagens sem alt, canonical errado, velocidade (Core Web Vitals). IA ajuda a categorizar e priorizar os achados.","tools":"Screaming Frog, Google Search Console, PageSpeed Insights API","done":false},{"id":"p_1776966014671_6yo","action":"Pesquisa de palavras-chave com IA","detail":"Combinar dados do Search Console (queries com impressões mas CTR baixo = quick wins) com pesquisa de novas palavras via SEMrush/Ahrefs API. IA analisa o conjunto e sugere clusters temáticos priorizados.","tools":"Google Search Console API, SEMrush API, GPT-4o (análise e clustering)","done":false},{"id":"p_1776966014671_4j5","action":"Geração de brief de conteúdo","detail":"Para cada palavra-chave/cluster, IA gera um brief completo: título sugerido, estrutura de tópicos, perguntas a responder, meta description, palavras-chave secundárias, CTA recomendado.","tools":"Claude API, Output: Google Doc estruturado","done":false},{"id":"p_1776966014671_ggl","action":"Geração e revisão do conteúdo","detail":"IA escreve o primeiro rascunho com base no brief. Revisor humano valida informações, adiciona dados proprietários e ajusta o tom de voz. Surfer SEO pode ser usado para otimização on-page.","tools":"Claude API / GPT-4o, Surfer SEO (on-page), Revisão humana obrigatória","done":false},{"id":"p_1776966014671_66s","action":"Publicação e monitoramento","detail":"Publicação no CMS com todos os campos SEO preenchidos. Google Search Console monitora indexação e posições. Dashboard mensal automatizado mostra novos artigos, posições ganhas/perdidas, tráfego por conteúdo.","tools":"Search Console API, Looker Studio, Alertas de indexação","done":false}],"areas":"Marketing, Comunicação, Martech, TI (CMS e otimizações técnicas)","blocks":["SEO tem retorno lento (3–6 meses) — alinhar expectativas com a diretoria.","Conteúdo gerado 100% por IA sem revisão pode prejudicar E-E-A-T do Google — revisão humana é inegociável.","Problemas técnicos do site bloqueiam resultados de conteúdo — auditar antes de escalar produção.","Sem acesso ao Search Console configurado e com dados históricos, o Step 02 fica limitado."]},{"id":"s_1776966014671_cq68","color":"#c084fc","area":"Sprint 7 · Marketing / CX / Retenção","title":"Gestão de Programas de MGM","prob":"Dificuldade em gerir programas de Member Get Member — rastreamento de indicações manual, atribuição imprecisa, recompensas não automatizadas e baixa visibilidade do funil de indicações por membro.","mvp":"Criar uma camada de rastreamento de indicações com links únicos por membro, atribuição automática de conversão, notificações ao indicador e um painel de gestão. IA entra para personalizar comunicações de ativação e reengajamento.","time":"4–5 semanas","complex":"Média-Alta","impact":"Alto","resp":[],"deadline":"","done":false,"criteria":[{"id":"c_1776966014671_7ic","text":"Links únicos de indicação gerados para 100% dos membros ativos","done":false},{"id":"c_1776966014671_msq","text":"Atribuição de conversão automática funcionando com < 5% de erro","done":false},{"id":"c_1776966014671_7xz","text":"Taxa de indicação por membro ativo ≥ 1 por mês","done":false},{"id":"c_1776966014671_7fi","text":"ROI do programa de MGM calculado e visível no dashboard","done":false}],"steps":[{"id":"p_1776966014671_0rz","action":"Geração de links únicos por membro","detail":"Para cada membro participante do MGM, gerar um link curto único com parâmetro de rastreamento embutido. Membro recebe o link via WhatsApp ou e-mail.","tools":"Short.io API / Bitly API, WhatsApp Business API, CRM (registro do link por membro)","done":false},{"id":"p_1776966014671_rt5","action":"Rastreamento de cliques e cadastros","detail":"Quando o indicado acessa o link, o parâmetro de referral é armazenado em cookie/sessionStorage e vinculado ao cadastro/compra. Script de tracking na landing page identifica a origem.","tools":"JavaScript (tracking script), GTM Data Layer, Backend webhook (atribuição)","done":false},{"id":"p_1776966014672_tje","action":"Atribuição automática de conversão","detail":"Quando o indicado converte, o sistema cruza o evento de conversão com o ID do indicador e registra a indicação como convertida no CRM. Gatilho automático para fluxo de recompensa.","tools":"CRM API (atualização de registro), Evento de conversão via webhook","done":false},{"id":"p_1776966014672_jzp","action":"IA personaliza comunicação de ativação","detail":"IA analisa o perfil do membro e gera mensagem de ativação personalizada. Régua de comunicação: convite inicial → lembrete 7 dias → celebração quando converte → reativação se parou de indicar.","tools":"Claude API (personalização), WhatsApp Business API, Automação de e-mail (RD / HubSpot)","done":false},{"id":"p_1776966014672_wgq","action":"Dashboard de gestão do programa","detail":"Painel com: ranking de membros por indicações convertidas, funil (links gerados → cliques → cadastros → conversões), custo por indicação, ROI do programa.","tools":"Looker Studio / Metabase, Atualização diária automática","done":false}],"areas":"Marketing, CX, Retenção, Martech, TI / Dev (tracking script)","blocks":["Cookie de referral pode ser perdido se o indicado demorar para converter (>30 dias) — definir janela de atribuição e fallback.","WhatsApp Business API tem limites de envio — verificar limites de tier e aquecer a conta antes.","Definir claramente a mecânica de recompensa antes de construir — isso define muito da arquitetura.","Fraude de indicações — implementar validação de e-mail/CPF no momento da atribuição."]},{"id":"s_1776966031567_92ui","color":"#6fda9e","area":"Sprint 8 · EXPERIÊNCIA DO CLIENTE / Voc","title":"VoC Unificado","prob":"NPS, CSAT e CPA vivem em silos e são vistos como snapshots. A história do aluno (NPS 9 na matrícula → CSAT 6 no mês 2 → NPS 4 no mês 4) se perde. Aluno que parou de responder é tratado como missing data — quando na verdade é o sinal mais forte de churn.","mvp":"Painel unificado que mostra trajetória temporal do aluno através de NPS/CSAT/CPA, dispara alerta quando uma nova resposta piora a baseline cruzada com Health Score, e trata silêncio progressivo como flag ativa — não como dado ausente.","time":"4-5 semanas","complex":"Média","impact":"Alto","deadline":"2026-07-10","resp":["Carolina Loyola da Silva Monteiro","Matheus Henrique de Melo Santos"],"done":false,"criteria":[{"id":"c_1776975599450_gvh","text":"Trajetória temporal por aluno visível em uma única tela, cruzando NPS + CSAT + CPA + pesquisas pontuais","done":false},{"id":"c_1776975603567_ymy","text":"Detector de discrepância interna ('coordenação 9 vs atendimento 3') disparando alerta classificado","done":false},{"id":"c_1776975616806_8v6","text":"Silêncio tratado como flag explícita no sistema, não como missing data","done":false}],"steps":[{"id":"p_1776966031567_0d4","action":"Unificação de fontes de pesquisa","detail":"NPS + CSAT + CPA + pesquisas pontuais (Medicina, Pós, etc.) consolidadas em schema único.","tools":"INDECX, Excel","done":false},{"id":"p_1776975706212_i8c","action":"Linha do tempo por aluno","detail":"Visualização cronológica de todas as respostas do aluno, com score e texto aberto.","tools":"React · Visualização temporal","done":false},{"id":"p_1776975732269_15u","action":"Detector de discrepância","detail":"Regras + LLM identificam divergências significativas entre dimensões de pesquisa.","tools":"Claude API · Regras heurísticas","done":false},{"id":"p_1776975753025_15k","action":"Silêncio como sinal","detail":"Cálculo de taxa de resposta esperada individual; flag dispara quando cai consistentemente.","tools":"Python · Estatística","done":false},{"id":"p_1776975815369_or0","action":"Alertas em tempo real","detail":"Fila priorizada por papel com contexto da mudança observada.","tools":"Event-driven · API · Slack · Email · Webhook","done":false}],"areas":"CX, Data/BI, TI","blocks":["A fragmentação das fontes de pesquisa é o maior obstáculo — pode exigir padronização antes da unificação.","Silêncio como sinal precisa de baseline individual — as primeiras semanas não terão calibração suficiente.","Discrepância exige categorização clara das dimensões — sem taxonomia consolidada, a regra fica frágil.","Volume de alertas precisa ser controlado — consultor saturado ignora qualquer um."]},{"id":"s_1777039046104_22e6","color":"#f0c040","area":"SPRINT 9 · Experiência do Cliente / VOC","title":"NPS 360","prob":"Quando um ciclo de NPS está rodando, conseguimos acompanhar os resultados em tempo real — o dado chega. O que não chega com o dado são as quatro camadas que o transformam em ação: alertar, comparar, priorizar e tratar.","mvp":"Um painel único que recebe o dado em tempo real e adiciona sobre ele quatro camadas de inteligência — ALERTAR, COMPARAR, PRIORIZAR, TRATAR — operando como loop contínuo, com email diário às 8h consolidando esses quatro movimentos para o responsável designado de cada unidade.","time":"6-8 semanas","complex":"Alta","impact":"Muito Alta","deadline":"2026-06-19","resp":["Carolina Loyola da Silva Monteiro","Matheus Henrique de Melo Santos"],"done":false,"criteria":[{"id":"c_1777039107983_s7d","text":"Painel com segmentação por BU, Unidade, Curso, Período, Coordenador e Professor — adicionando quatro camadas novas: alerta ativo, comparação automática vs ciclo anterior, priorização ranqueada e recomendação de tratamento por caso.","done":false},{"id":"c_1777039113102_bat","text":"Trajetória longitudinal de cada aluno com NPS + CSAT + CPA em linha do tempo única; mudanças de status (detrator ↔ neutro ↔ promotor) destacadas e contadas como evento.","done":false},{"id":"c_1777039123290_h4p","text":"Classificação automática de detratores em 4 dimensões: motivo (taxonomia auditável), recuperabilidade, recorrência individual e concentração sistêmica.","done":false},{"id":"c_1777039133557_5em","text":"Alerta de detrator dispara no momento da resposta, em até 5 minutos, para o responsável designado da unidade — com contexto 360 pré-carregado.","done":false},{"id":"c_1777039145292_lwz","text":"Email diário consolidado enviado às 8h com todos os casos do dia anterior, agrupados por responsável, com cenário comparativo, análise de motivos e recomendação de atuação.","done":false},{"id":"c_1777039155085_sfb","text":"Rascunho de argumentação de close the loop gerado com brand voice Mandic e tom inferido do aluno, sempre revisado por humano — nunca envio automático.","done":false},{"id":"c_1777039166205_q43","text":"Silêncio tratado como flag ativa, com taxa de resposta esperada calculada individualmente — não como missing data.","done":false},{"id":"c_1777039186942_m8v","text":"Biblioteca viva de argumentações que recuperaram alimentando o prompt, com curadoria e medição de taxa de recuperação por cluster de motivo.","done":false},{"id":"c_1777039189761_71m","text":"SLA visível de Close the Loop (contador regressivo de 48h) com escalation ladder automático: consultor → coordenador → direção.","done":false},{"id":"c_1777039199794_gzf","text":"Quality score de tratativa medido não por 'fechou o caso', mas por mudança real de score na pesquisa seguinte.","done":false}],"steps":[{"id":"p_1777039046104_fbq","action":"Unificação do schema de pesquisas","detail":"NPS + CSAT + CPA + pesquisas pontuais consolidados em um schema único, com chave de aluno estável e versionamento de pesquisa.","tools":"ETL · Supabase · Versionamento","done":false},{"id":"p_1777039321071_fla","action":"Pipeline de ingestão em tempo real","detail":"Webhook da ferramenta de pesquisa → fila → enriquecimento com contexto do aluno → gravação no schema unificado. Latência-alvo < 60s.","tools":"Webhook · Queue · Enrichment","done":false},{"id":"p_1777039354902_4r9","action":"Painel segmentado com comparação e priorização","detail":"Visão agregada por BU / Unidade / Curso / Período / Coordenador / Professor. Heatmap prioriza onde agir; ranking ordena por impacto × urgência × recuperabilidade.","tools":"Next.js · Recharts · Vercel","done":false},{"id":"p_1777039387466_phy","action":"Trajetória longitudinal por aluno","detail":"Linha do tempo única cruzando NPS + CSAT + CPA + pesquisas pontuais. Mudanças de status marcadas como evento.","tools":"Time-series · React","done":false},{"id":"p_1777039428097_11q","action":"Classificação automática de detrator","detail":"Texto aberto → LLM classifica motivo (taxonomia definida), recuperabilidade, recorrência. Confiança baixa → revisão humana.","tools":"Claude API · Prompt versionado","done":false},{"id":"p_1777039461081_mcc","action":"Detecção sistêmica e co-ocorrência","detail":"Agregação por turma / professor / disciplina / coordenação + análise de co-ocorrência de motivos.","tools":"Python · SQL · Stats","done":false},{"id":"p_1777039492532_cse","action":"Health Score com change-point detection","detail":"Score reavaliado em tempo real a cada resposta. Algoritmo identifica momento de inflexão da trajetória.","tools":"Python · Ruptures library","done":false},{"id":"p_1777039536502_77j","action":"Silêncio como flag ativa","detail":"Taxa de resposta esperada individual. Flag dispara quando cai consistentemente — não é missing data, é sinal.","tools":"Python · Baseline individual","done":false},{"id":"p_1777039557905_pxq","action":"Alerta em tempo real ao coordenador","detail":"Detrator novo + Health Score em zona vermelha dispara alerta imediato (< 5min). Fila priorizada por papel; contexto 360 pré-carregado.","tools":"WebSocket · Push · Priority queue","done":false},{"id":"p_1777039596234_gi3","action":"Email diário consolidado (08:00 BRT)","detail":"Responsável designado de cada unidade recebe um único email com todos os casos do dia anterior: cenário comparativo, análise de motivos, recomendação de atuação, link direto para cada caso no painel.","tools":"Cron · SendGrid · MJML","done":false},{"id":"p_1777039627328_9qn","action":"Rascunho de argumentação (IA + humano)","detail":"Contexto 360 + tom inferido + motivo + brand voice Mandic + playbook → rascunho gerado. Consultor revisa, edita e envia. Sem envio automático.","tools":"Claude API · Playbook · Guardrails","done":false},{"id":"p_1777039658669_7la","action":"SLA 48h com escalation ladder","detail":"Contador regressivo visível por caso. 24h sem ação → notifica coordenador. 72h sem ação → notifica direção.","tools":"Workflow · SLA engine","done":false},{"id":"p_1777039688197_tsr","action":"Biblioteca viva de argumentações","detail":"Cada argumentação enviada é marcada com outcome na pesquisa seguinte. As que recuperaram alimentam a biblioteca e o prompt.","tools":"Logging · Feedback loop · Curadoria","done":false},{"id":"p_1777039717656_k6w","action":"Quality Score de tratativa","detail":"Não 'fechou', mas 'moveu'. Métrica reportada por consultor, por unidade, por motivo, por playbook.","tools":"BI · Dashboard gestor","done":false}],"areas":"CX, Gerente Operação, Coordenação Unidade, Data/BI, TI","blocks":["Schema unificado é pré-requisito — se as pesquisas não convergirem em chave de aluno estável, a trajetória não se sustenta.","Taxonomia de motivos mal construída invalida todo o fluxo a jusante. Versionada, nunca imutável.","Saída decidida é categoria sensível — risco de desistir de aluno recuperável. Auditoria amostral obrigatória nos primeiros 90 dias.","Volume de alertas precisa ser controlado. Regras de supressão: alerta sistêmico suprime individuais; confiança baixa vai para revisão.","Risco reputacional do rascunho de IA: se vazar como envio automático, queima a marca. Guardrail humano é inegociável e auditável.","Silêncio como sinal exige baseline individual com volume mínimo — alunos novos não terão calibração suficiente nos primeiros 60 dias.","Dados financeiros no prompt do consultor: política de minimização obrigatória.","Change-point detection em série curta é ruidoso. Mínimo de 4 observações por aluno antes do algoritmo entrar em operação."]},{"id":"s_1777042599706_rkrn","color":"#5b8fff","area":"SPRINT 10 · CS / Retenção","title":"Performance da Retenção | Visão Operacional","prob":"Consultor comercial e coordenador de unidade estão no escuro em relação à própria performance. O backoffice de retenção alimenta hoje uma planilha a partir do workflow, mas essa planilha fica com o backoffice; consultor e coordenador não enxergam em tempo real o que está acontecendo na própria carteira/unidade.","mvp":"Refinar o protótipo existente (cs-ops-virid.vercel.app) em quatro frentes: automatizar ingestão, embedar book de retenção como base de conhecimento consultável, adicionar camada de argumentação assistida e gerar alerta diário personalizado por destinatário.","time":"5-6 semanas","complex":"Média-Alta","impact":"Muito Alto","deadline":"2026-06-19","resp":["Carolina Loyola da Silva Monteiro","Gabriela Cruz Macedo Pradela"],"done":false,"criteria":[{"id":"c_1777042768011_h0y","text":"Protótipo atual (cs-ops-virid.vercel.app) refinado e promovido a versão operacional, com dívidas técnicas resolvidas antes de empilhar automação e RAG","done":false},{"id":"c_1777042781951_i92","text":"Ingestão automatizada do workflow do backoffice operando — decisão real-time (webhook/API) vs diária (batch) publicada, justificada pela frequência real de atualização do backoffice","done":false},{"id":"c_1777042794052_16w","text":"Book de retenção embedado no painel: indexado, consultável por similaridade semântica, com owner nomeado e processo de reindexação definido","done":false},{"id":"c_1777042803686_8l0","text":"Argumentação assistida gerada por caso, com citação obrigatória do trecho do book que fundamentou o rascunho — sem citação, sem rascunho","done":false},{"id":"c_1777042813621_duy","text":"Alerta diário personalizado enviado automaticamente a cada consultor e a cada coordenador, via canal definido (e-mail / WhatsApp / Slack) e com link direto ao caso no painel","done":false},{"id":"c_1777042823819_w5v","text":"Três visões operacionais distintas por papel: consultor (própria carteira + argumentação assistida), coordenador (sua unidade), diretor (comparativo entre unidades)","done":false},{"id":"c_1777042833384_cwf","text":"Alertas em tempo real de SLA próximo do estouro, caso parado e concentração anômala de motivo","done":false},{"id":"c_1777043352203_rb6","text":"Separação 'transferência vs cancelamento' aplicada como default em todas as views e relatórios","done":false}],"steps":[{"id":"p_1777042599706_3gv","action":"1. Auditoria e refinamento do protótipo v0","detail":"Análise do estado atual em cs-ops-virid.vercel.app: o que aproveitar, o que refatorar, dívidas técnicas a resolver antes de empilhar automação e argumentação.","tools":"Next.js · Audit · Refactor","done":false},{"id":"p_1777043407689_9fn","action":"2. Decisão e automação da ingestão","detail":"Levantar com o backoffice a frequência real de atualização do workflow; decidir real-time vs diária (batch) com base na cadência real da origem; implementar pipeline automatizado.","tools":"Webhook · Cron · Google Sheets API / DB direto · Data contract","done":false},{"id":"p_1777043436869_v75","action":"3. Embedding do book de retenção","detail":"Chunking do book, geração de embeddings, indexação em vector store e interface de busca semântica. Processo de reindexação automatizada quando o book for atualizado pelo owner.","tools":"Embeddings · Vector store · RAG","done":false},{"id":"p_1777043472287_0h7","action":"4. Camada de argumentação assistida","detail":"Para cada caso: recuperar os trechos mais relevantes do book por similaridade e gerar rascunho de abordagem via LLM, com citação obrigatória do trecho-fonte.","tools":"Claude API · RAG · Prompt contextual","done":false},{"id":"p_1777043500207_dpl","action":"5. Visão do consultor (com argumentação)","detail":"Minha carteira: casos ativos, SLA por caso com semáforo, motivos agrupados, status, próxima ação esperada + rascunho de argumentação com citação do book ao lado de cada caso.","tools":"Next.js · Dashboards segmentados","done":false},{"id":"p_1777043528654_7gy","action":"Visão do coordenador e do diretor","detail":"Coordenador: panorama da unidade, comparativo interno, motivos predominantes. Diretor: comparativo entre unidades com separação transferência/cancelamento por default.","tools":"Next.js · Agregação · BI","done":false},{"id":"p_1777043559140_70o","action":"Alertas em tempo real","detail":"Notificações (e-mail / Slack / WhatsApp) quando SLA próximo do estouro, caso parado há mais de X dias e concentração anômala de motivo.","tools":"Webhook · Notification engine","done":false},{"id":"p_1777043588754_mp3","action":"Alerta diário priorizado por destinatário","detail":"Digest automático gerado todo início de dia útil. Para cada consultor: lista priorizada dos casos que deve tratar no dia com argumentação sugerida e link direto ao caso no painel. Para cada coordenador: consolidado da unidade com casos críticos.","tools":"Cron · Template de digest · Notification engine · Priorização auditável","done":false},{"id":"p_1777043619289_x30","action":"Guardrails de qualidade da argumentação","detail":"Citação do trecho-fonte obrigatória em todo rascunho; amostragem humana das argumentações geradas; canal de feedback do consultor/coordenador para sinalizar rascunhos ruins.","tools":"QA · Feedback loop · Governança","done":false}],"areas":"CX | CS · Backoffice de Retenção · Diretor Captação | Coordenadores Captação · Gerentes Operações BU · Coordenações Unidades · Data / BI · TI","blocks":["Qualidade do book de retenção é o teto da qualidade da argumentação: book desatualizado gera rascunhos que o consultor descarta — nomear owner do book é pré-requisito.","Citação obrigatória do trecho-fonte é inegociável: sem citação, a IA vira autoridade sem amarração.","Decisão real-time vs diária depende da frequência real em que o backoffice alimenta o workflow; não prometer tempo real se a origem atualiza uma vez por dia.","Digest diário com lista longa vira spam e é ignorado — definir teto de casos por destinatário (ex: top 5-10) e regra de priorização explícita e auditável.","Priorização do digest precisa ser defensável quando o consultor pergunta por que esse caso está no topo.","Timing e canal do digest (manhã, noite anterior, WhatsApp, e-mail, Slack) impactam adoção mais do que a qualidade técnica — testar com um subconjunto pequeno de consultores antes de expandir.","Protótipo v0 pode ter dívidas técnicas que exijam refatoração pesada antes de empilhar RAG, automação e digest diário.","Resistência potencial do backoffice: expor no front o que antes só eles viam pode ser lido como perda de controle; enquadrar como apoio à operação, não fiscalização.","Argumentação assistida cria risco reputacional se usada sem revisão humana — consultor sempre como filtro final, nunca envio direto.","Adoção pelo consultor exige mudança cultural dupla: olhar painel para decidir o dia e partir de um rascunho assistido em vez de reinventar o argumento.","Alertas mal calibrados saturam o consultor e viram ruído ignorado — começar conservador e ajustar por feedback.","Camada preditiva (risco antecipado, baseline ajustado) segue como evolução posterior — não forçar no MVP."]},{"id":"s_1777045478812_8ns9","color":"#ff7c5b","area":"SPRINT 11 · CX / Atendimento Multi-BU","title":"Cockpit de Atendimento","prob":"Uma primeira versão do painel de atendimento já foi construída e publicada em concierges-kappa.vercel.app, mas hoje é restrita à Pós-Médica e cobre apenas o canal WhatsApp do Concierge. O atendimento do aluno no Mandic acontece em múltiplas BUs e em dois fluxos distintos — WhatsApp (Concierge) e Requerimentos — então não existe visão única do estado do atendimento.","mvp":"Refinar o protótipo existente em cinco frentes: expandir para todas as BUs, unificar WhatsApp e Requerimentos no mesmo painel, integrar em tempo real com a Zendesk via webhook/API, classificar automaticamente por IA os textos dos alunos para extrair motivos e urgência, e disparar alertas ativos por e-mail para os responsáveis pelas tratativas quando SLA está em risco.","time":"6-7 semanas","complex":"Alta","impact":"Muito Alto","deadline":"2026-07-10","resp":["Carolina Loyola da Silva Monteiro","Gabriela Cruz Macedo Pradela"],"done":false,"criteria":[{"id":"c_1777045504655_9dr","text":"Protótipo atual (concierges-kappa.vercel.app) refinado e promovido a versão operacional, com dívidas técnicas resolvidas antes de expandir BUs e camadas","done":false},{"id":"c_1777045516296_nlk","text":"Integração em tempo real com Zendesk operando via webhook/API — latência máxima de poucos minutos entre evento no Zendesk e painel (condição imprescindível)","done":false},{"id":"c_1777045525343_818","text":"Visão multi-BU unificada: filtro por Pós-Odonto, Pós-Médica/PGMED e Medicina Graduação e visão consolidada cross-BU, sobre os dois fluxos (WhatsApp + Requerimentos)","done":false},{"id":"c_1777045534279_n7x","text":"SLA por nível (N1, N2, ...) e/ou grupo da Zendesk mapeado, documentado e monitorado no painel — se informação não existir no Zendesk hoje, levantada com os responsáveis e estruturada","done":false},{"id":"c_1777045544026_hgv","text":"Classificação automática de motivo, urgência e sentimento a partir do texto dos alunos, com insights agregados dos top motivos por BU e tendência ao longo do tempo","done":false},{"id":"c_1777045552496_2bn","text":"Alertas ativos por e-mail aos responsáveis pelas tratativas quando SLA está em risco, quando há anomalia ou concentração de motivo — com link direto ao ticket/fila no Zendesk e no painel","done":false},{"id":"c_1777045560896_iz1","text":"Três visões por papel (agente / supervisor / C-level) com narrativa automática, recomendação e plano de ação acionável, agora informados pelos insights dos motivos classificados","done":false},{"id":"c_1777045570262_tof","text":"Benchmark de mercado documentado (Zendesk Explore, Intercom, Salesforce, Medallia, Ada etc): o que foi incorporado e por quê","done":false}],"steps":[{"id":"p_1777045478812_j4e","action":"1. Auditoria e refinamento do protótipo v0","detail":"Análise do estado atual em concierges-kappa.vercel.app (hoje restrito a Pós-Médica e WhatsApp): o que aproveitar, o que refatorar, dívidas técnicas a resolver antes de expandir para multi-BU.","tools":"Next.js · Audit · Refactor","done":false},{"id":"p_1777045612263_kpf","action":"Benchmark de mercado","detail":"Avaliação explícita de padrões consolidados: Zendesk Explore, Intercom Reports, Salesforce Service Cloud Analytics, Medallia e Qualtrics XM Discover, Ada e Gorgias. Documenta o que incorporar e o que descartar.","tools":"Benchmark · Discovery · Documentação","done":false},{"id":"p_1777045644476_b9x","action":"Integração Zendesk em tempo real","detail":"Webhook/API da Zendesk alimentando o painel com latência de poucos minutos. Modelo de dados canônico cobrindo tickets, tags, grupos, filas, níveis, SLA fields, texto livre.","tools":"Zendesk API · Webhook · Supabase · Data model","done":false},{"id":"p_1777045674757_4i7","action":"Levantamento e estruturação de SLAs por nível/grupo","detail":"Mapeamento junto aos responsáveis de cada fila/nível: qual é o SLA prometido por N1, N2, grupos específicos da Zendesk. Se não está estruturado no Zendesk hoje, estruturar como pré-requisito para o painel.","tools":"Discovery · Zendesk SLA policies · Contrato de SLA","done":false},{"id":"p_1777045715343_ybb","action":"5. Expansão multi-BU e unificação de canais","detail":"Modelo de dados flexível para acomodar Pós-Odonto, Pós-Médica/PGMED e Medicina Graduação. Unificação WhatsApp (Concierge) + Requerimentos no mesmo painel, com filtro por BU e visão cross-BU.","tools":"Data model · Next.js · Filtros dinâmicos","done":false},{"id":"p_1777045742227_3qt","action":"6. Classificação automática dos textos dos alunos","detail":"Texto livre de ticket / mensagem → classificação por motivo (taxonomia definida), urgência e sentimento. Prompt versionado, avaliação com golden set, revisor humano amostral nos primeiros meses.","tools":"Claude API · RAG · Classificação · Taxonomia","done":false},{"id":"p_1777045770411_0zh","action":"Camada de alertas ativos por e-mail","detail":"Regras configuráveis por responsável pela tratativa: SLA em risco de estouro, volume anômalo, concentração de motivo específico, caso parado. E-mail automático aos responsáveis com link direto ao ticket/fila e ao painel.","tools":"Notification engine · E-mail · Priorização auditável","done":false},{"id":"p_1777045799243_v42","action":"8. Narrativa, recomendação e plano de ação por audiência","detail":"Três visões distintas (agente / supervisor / C-level) com parágrafo executivo automático, hipótese causal ancorada nos dados observáveis, recomendação concreta.","tools":"Prompt versionado · Claude API · Narrativa por papel","done":false},{"id":"p_1777045828514_y9s","action":"Loop de feedback e calibração","detail":"Botão útil / não útil / corrigir em cada narrativa e alerta; amostragem humana das classificações de motivo; canal de feedback dos responsáveis sobre qualidade dos alertas.","tools":"Feedback logging · Governança · PDCA","done":false}],"areas":"CX / Atendimento · Gerente Operações das BUs · Data / BI · TI","blocks":["Integração Zendesk em tempo real é condição imprescindível e também o principal bloqueador: plano da Zendesk, limites de API, disponibilidade de webhooks e custo precisam ser validados antes do start.","SLA por N/grupo não estruturado no Zendesk hoje é uma dependência real: levantamento com responsáveis leva tempo, e se a estruturação no Zendesk virar pré-requisito, pode virar gargalo crítico.","Multi-BU significa taxonomias e filas diferentes em cada BU; unificar sem apagar nuance de cada operação exige modelo de dado flexível e co-criação com cada BU.","Classificação automática de motivo depende de taxonomia consolidada: sem taxonomia, classificação fica frouxa e insights saem inúteis.","Alertas por e-mail mal calibrados saturam o inbox dos responsáveis e são ignorados após uma semana — começar conservador (poucos alertas de alta precisão) e ampliar por feedback.","Responsáveis pelas tratativas têm disponibilidade variável para responder a alertas: mapear com cada área quem recebe o quê, com qual cadência e qual ação esperada, antes de ligar os disparos.","Qualidade da classificação é medida e reportada, não prometida: acurácia inicial será imperfeita — revisor humano amostral nos primeiros meses.","Benchmark de mercado pode virar paralisia se a equipe tentar copiar tudo — o passo é avaliar e documentar o que incorporar, não replicar dashboard inteiro de concorrente.","Dívidas técnicas do v0 (concierges-kappa.vercel.app) podem exigir refactor pesado antes de expandir multi-BU; tentar empilhar cinco frentes sobre base instável gera bugs difíceis de rastrear.","Privacidade e LGPD: texto livre de aluno é dado sensível, e classificação de sentimento exige política clara de minimização no prompt e retenção auditável."]},{"id":"s_1777046568509_joqe","color":"#c084fc","area":"SPRINT 12 · CX | Customer Marketing","title":"Hub de Comunicação com o Aluno","prob":"O aluno recebe hoje um volume significativo de comunicação do Mandic via WhatsApp e e-mail, mas não tem nenhum lugar permanente para consultar esse conteúdo. As mensagens somem no feed do WhatsApp ou no inbox do e-mail; o aluno que perdeu um comunicado importante não tem como recuperar.","mvp":"Lançar rápido um site público paralelo ao TOTVS, aberto e sem autenticação no MVP, servindo como casa permanente do conteúdo de comunicação com o aluno: vídeos, trilhas, artigos, books, comunicados. CMS que permite às áreas publicarem com autonomia. Tudo que não é essencial para o lançamento fica em roadmap pós-MVP explícito.","time":"4-5 semanas","complex":"Média","impact":"Alto","deadline":"2026-06-08","resp":["Carolina Loyola da Silva Monteiro","Jose Paulo Teixeira Junior","Matheus Henrique de Melo Santos"],"done":false,"criteria":[{"id":"c_1777046593898_fb1","text":"Site público operacional no ar, sem autenticação, acessível a qualquer aluno pela URL direta","done":false},{"id":"c_1777046605606_ub0","text":"CMS operacional permitindo publicação de vídeos, trilhas, artigos, books e comunicados pelas áreas com autonomia e sem depender de TI a cada publicação","done":false},{"id":"c_1777046614057_snz","text":"Taxonomia mínima viável operando: curso, tipo de conteúdo, tema — pesquisável e filtrável, sem personalização por aluno","done":false},{"id":"c_1777046622707_s6x","text":"Biblioteca de lançamento publicada: mínimo de conteúdo por BU para o aluno achar que vale a pena a primeira visita e a segunda","done":false},{"id":"c_1777046637943_zm5","text":"Integração com canais ativos: régua de WhatsApp e e-mail passa a linkar para o conteúdo persistente no hub, não para conteúdo que morre no canal","done":false},{"id":"c_1777046648259_n2u","text":"Owner editorial nomeado e cadência de publicação por área definida antes do lançamento","done":false},{"id":"c_1777046658059_0wy","text":"Política editorial escrita: como o site é aberto, fica claro o que pode e o que não pode ser publicado (sem dado pessoal, sem conteúdo que exija controle de acesso)","done":false},{"id":"c_1777046666473_6uv","text":"Roadmap pós-lançamento publicado: autenticação, personalização, IA e gamificação ficam visíveis como evolução, não desaparecem — mas não bloqueiam o lançamento","done":false}],"steps":[{"id":"p_1777046568509_rc0","action":"Decisão de stack","detail":"Next.js + headless CMS (Sanity, Strapi ou Contentful) é o caminho recomendado — fit-for-purpose, rápido de levantar, autonomia das áreas não-técnicas para publicar. Decisão tomada em dias, não semanas.","tools":"Stack decision · CMS","done":false},{"id":"p_1777046698656_vpm","action":"Setup do site (público, sem auth)","detail":"Build inicial do site e do CMS, hospedagem, domínio. Sem camada de autenticação no MVP — escolha consciente para cortar semanas de escopo.","tools":"Next.js · CMS · Vercel","done":false},{"id":"p_1777046730826_bpy","action":"Taxonomia mínima viável","detail":"Três dimensões: curso (Pós-Odonto, Pós-Médica, Medicina Graduação, Odonto Graduação), tipo de conteúdo (vídeo, trilha, artigo, book, comunicado), tema.","tools":"Taxonomia · Data model","done":false},{"id":"p_1777046776471_roa","action":"Biblioteca de lançamento (em paralelo ao setup)","detail":"Áreas começam a produzir e curar conteúdo de lançamento enquanto o site está sendo montado. Objetivo: no dia do lançamento, hub com conteúdo suficiente para o aluno voltar.","tools":"Editorial · Curadoria","done":false},{"id":"p_1777046805306_19c","action":"Integração com régua de WhatsApp e e-mail","detail":"Toda régua ativa passa a incluir link para conteúdo no hub — o canal vira teaser + link, o conteúdo completo vive no hub.","tools":"Integração Martech · Template","done":false},{"id":"p_1777046835974_a3w","action":"Política editorial e governança","detail":"Owner do hub com mandato, cadência por área, fluxo de aprovação enxuto, regras do que pode/não pode, KPIs mínimos (acesso, permanência, retorno).","tools":"Governança · Editorial","done":false},{"id":"p_1777046862614_dvq","action":"Lançamento e medição","detail":"Go-live + monitoramento de acesso, permanência e retorno. Feedback aberto para áreas e para alunos. Métricas alimentam o roadmap pós-MVP.","tools":"Analytics · Lançamento","done":false},{"id":"p_1777046896741_hat","action":"Roadmap pós-MVP (documento, não execução)","detail":"Registro público do que fica para as próximas iterações, com prioridade sugerida: autenticação e SSO com TOTVS, personalização por curso e fase, IA, gamificação, métricas individualizadas.","tools":"Roadmap · Documentação","done":false}],"areas":"CX · Comunicação · Produto · TI","blocks":["Conteúdo é o produto: se a cadência de publicação for fraca, o hub morre em três meses — owner editorial com dedicação formal é pré-requisito, não desdobramento.","Biblioteca de lançamento fraca mata o MVP: as áreas precisam começar a produzir antes do setup terminar.","Integração com WhatsApp e e-mail é o caminho crítico para adoção: se a régua não passa a linkar ao hub desde o dia do lançamento, o aluno não chega.","Site aberto significa que conteúdo sensível ou dado pessoal não pode ser publicado; a política editorial precisa estar escrita antes do lançamento.","Confusão política com a área do aluno no TOTVS: posicionamento escrito deixando claro que TOTVS é transacional, hub é comunicacional, um não substitui o outro.","Roadmap pós-MVP sem prioridade e sem data vira nunca vai acontecer: cada item precisa de sponsor e de prazo orientativo, mesmo que mova depois.","Taxonomia simples demais pode travar descoberta quando o catálogo passar de algumas dezenas de itens — já prever o primeiro refinamento de taxonomia como item de roadmap pós-MVP."]},{"id":"s_doc_seo_geo_01","color":"#f472b6","area":"Sprint 6 (v2) · Marketing / Comunicação","title":"Maturidade em SEO + GEO com IA","prob":"Baixa maturidade em SEO e ausência de presença nos motores de IA generativos — sem processo estruturado de produção de conteúdo, sem inventário de menções em LLMs e sem monitoramento de autoridade digital.","mvp":"Criar um fluxo de produção de conteúdo SEO + GEO assistido por IA: pesquisa de palavras-chave com dados reais → inventário GEO de menções em IAs → briefing automático com camada GEO (FAQ + GEO hooks + E-E-A-T) → geração de rascunho com IA → revisão humana → publicação → monitoramento SEO + GEO (posições + share of voice em LLMs).","time":"4–5 semanas","complex":"Média-Alta","impact":"Alto","resp":[],"deadline":"","done":false,"criteria":[{"id":"c_seo_geo_01","text":"Auditoria técnica de SEO concluída com prioridades mapeadas","done":false},{"id":"c_seo_geo_02","text":"6 artigos publicados com fluxo assistido por IA","done":false},{"id":"c_seo_geo_03","text":"Ao menos 5 palavras-chave estratégicas na primeira página do Google (em 90 dias) [SEO]","done":false},{"id":"c_seo_geo_04","text":"Dashboard de monitoramento de posições ativo e atualizado","done":false},{"id":"c_seo_geo_05","text":"Inventário GEO concluído: marca mencionada em ≥ 3 plataformas de IA auditadas [GEO]","done":false},{"id":"c_seo_geo_06","text":"Ao menos 4 artigos otimizados para citação por IA (E-E-A-T + FAQ + dados proprietários) [GEO]","done":false},{"id":"c_seo_geo_07","text":"Dashboard GEO com monitoramento quinzenal de share of voice em ChatGPT, Perplexity e Gemini [GEO]","done":false}],"steps":[{"id":"p_seo_geo_01","action":"Auditoria técnica de SEO [one-time]","detail":"Rodar Screaming Frog ou Sitebulb no site. Identificar problemas técnicos críticos: páginas sem meta, imagens sem alt, canonical errado, velocidade (Core Web Vitals). IA categoriza e prioriza os achados.","tools":"Screaming Frog, Search Console, PageSpeed API","done":false},{"id":"p_seo_geo_02","action":"Pesquisa de palavras-chave com IA","detail":"Combinar dados do Search Console (queries com impressões mas CTR baixo = quick wins) com pesquisa de novas keywords via SEMrush/Ahrefs. IA analisa e sugere clusters temáticos priorizados.","tools":"Search Console API, SEMrush API, GPT-4o","done":false},{"id":"p_seo_geo_02b","action":"Inventário GEO — auditoria de menções em IAs [novo]","detail":"Testar prompts-chave do setor no ChatGPT, Perplexity, Gemini e Claude. Mapear: a marca é citada? Com que frequência? Em que contexto? Concorrentes aparecem mais? Esse baseline orienta toda a estratégia GEO.","tools":"ChatGPT, Perplexity, Gemini, Claude, Planilha de inventário","done":false},{"id":"p_seo_geo_03","action":"Geração de brief de conteúdo","detail":"Para cada palavra-chave/cluster, IA gera brief completo: título sugerido, estrutura de tópicos, perguntas a responder, meta description, palavras-chave secundárias, CTA recomendado.","tools":"Claude API, Google Doc estruturado","done":false},{"id":"p_seo_geo_03b","action":"Camada GEO no brief [novo]","detail":"Para cada artigo, o brief inclui: perguntas no formato que IAs respondem, seção de FAQ explícita, dados/estatísticas proprietárias da empresa, definições que podem ser usadas como fonte, autoria com credentials (E-E-A-T). IA sugere GEO hooks — trechos curtos e factuais que LLMs tendem a citar.","tools":"Claude API, Checklist E-E-A-T GEO","done":false},{"id":"p_seo_geo_04","action":"Geração e revisão do conteúdo","detail":"IA escreve o primeiro rascunho com base no brief. Revisor humano valida informações, adiciona dados proprietários e ajusta tom de voz. Surfer SEO para otimização on-page. Revisão humana é inegociável — protege E-E-A-T.","tools":"Claude API / GPT-4o, Surfer SEO, Revisão humana obrigatória","done":false},{"id":"p_seo_geo_05","action":"Publicação e monitoramento SEO","detail":"Publicação no CMS com todos os campos SEO preenchidos. Google Search Console monitora indexação e posições. Dashboard mensal automatizado com novos artigos, posições ganhas/perdidas e tráfego por conteúdo.","tools":"Search Console API, Looker Studio, Alertas de indexação","done":false},{"id":"p_seo_geo_05b","action":"Monitoramento GEO quinzenal [novo]","detail":"A cada 2 semanas, rodar conjunto de prompts-padrão nas IAs e registrar: marca foi citada? Posição relativa? Mudança vs baseline? Dashboard com evolução do share of voice. Alertas manuais se concorrente ganhar espaço em resposta-chave.","tools":"Prompts-padrão, Planilha GEO, Looker Studio","done":false}],"areas":"Marketing, Comunicação, Martech, TI (CMS)","blocks":["SEO tem retorno em 3–6 meses — alinhar expectativas com a diretoria. GEO pode mostrar resultados mais rápidos (4–8 semanas) e ajudar a justificar o investimento no curto prazo.","Conteúdo 100% IA sem revisão prejudica E-E-A-T do Google. Para GEO é ainda mais crítico: IAs preferem citar fontes com autoria clara e dados originais. Revisão humana é inegociável.","Problemas técnicos do site bloqueiam resultados de conteúdo — auditar antes de escalar a produção.","Sem Search Console configurado e com dados históricos, o Step 02 fica limitado. Prioridade: configurar e validar acesso antes do início.","Não existe ferramenta consolidada de GEO analytics. Reservar 2–3h/quinzena para processo manual até ferramentas amadurecerem (Profound, Otterly.ai).","Conteúdo publicado hoje pode levar meses para impactar respostas de IAs treinadas com dados defasados. Canal de maior retorno imediato: Perplexity (busca em tempo real)."]},{"id":"s_doc_prisma_01","color":"#fb923c","area":"Sprint · Marketing / Inteligência de Mercado","title":"Projeto Prisma — E1: Preparar o Ambiente e Infraestrutura","prob":"Sem uma base técnica estruturada, nenhuma coleta de dado funciona — tabelas mal modeladas comprometem a comparabilidade entre semanas e tornam as análises futuras não confiáveis.","mvp":"Montar toda a base técnica do Projeto Prisma antes de qualquer coleta: banco de dados estruturado com schema comparável entre semanas, ferramenta de automação conectada e testada, lista de concorrentes P1 cadastrada por BU, e documentação publicada — permitindo que todas as etapas seguintes sejam construídas sobre uma fundação sólida e auditável.","time":"1 semana","complex":"Básica","impact":"Estrutural (pré-requisito)","resp":[],"deadline":"","done":false,"criteria":[{"id":"c_prisma_01","text":"Banco de dados criado e acessível — tabelas visíveis, estruturadas e prontas (vazias)","done":false},{"id":"c_prisma_02","text":"Teste de integração executado: uma linha de dado gravada via n8n e consultada de volta com sucesso","done":false},{"id":"c_prisma_03","text":"Lista de concorrentes P1 cadastrada no banco com os links dos sites principais, separada por BU (Medicina Grad, Medicina Pós, Odonto Pós)","done":false},{"id":"c_prisma_04","text":"README publicado e compreensível por qualquer membro da equipe sem suporte técnico","done":false}],"steps":[{"id":"p_prisma_01","action":"Criar o banco de dados no Supabase","detail":"Criar o projeto no Supabase e modelar as tabelas que receberão os dados de cada camada: anúncios pagos, notícias, portfólio, preço, tráfego, captação e scores. Cada tabela deve ter o campo de semana de referência já previsto — sem esse campo, a análise comparativa da Etapa 8 não funcionará.","tools":"Supabase, SQL","done":false},{"id":"p_prisma_02","action":"Conectar o n8n ao banco de dados","detail":"Configurar a ferramenta de automação (n8n) com as credenciais do Supabase. Executar o teste de escrita e leitura: gravar uma linha de dado sintético via n8n e consultar esse dado de volta para confirmar que a comunicação está funcionando nos dois sentidos.","tools":"n8n, Supabase API","done":false},{"id":"p_prisma_03","action":"Cadastrar a lista de concorrentes P1 por BU","detail":"Registrar no banco os concorrentes prioritários de cada unidade de negócio — com o nome da instituição, link do site principal, BU correspondente e tier (P1). Esta lista é validada com o CMO antes do cadastro. Concorrentes P2 podem ser incluídos como rascunho, mas não ativados ainda.","tools":"Supabase, Alinhamento com CMO","done":false},{"id":"p_prisma_04","action":"Publicar o README do projeto","detail":"Escrever e publicar um documento que explica a estrutura do projeto: quais tabelas existem e o que cada uma armazena, como o n8n está organizado, onde ficam as credenciais, e qual é a lógica de nomenclatura adotada. O README é o único documento que qualquer pessoa lê antes de mexer no sistema.","tools":"Notion / GitHub / Confluence","done":false}],"areas":"Marketing / Inteligência de Mercado, CMO (validação da lista), Martech / TI (infraestrutura)","blocks":["Schema mal modelado compromete todo o projeto — a estrutura das tabelas criada aqui determina se os dados de semanas diferentes serão comparáveis entre si. Um campo de data mal definido ou ausente pode exigir refatoração completa nas etapas seguintes.","Lista de concorrentes precisa de validação antes do cadastro — se a lista for cadastrada sem alinhamento com o CMO e precisar ser alterada depois, dados coletados nas próximas etapas podem estar associados a concorrentes errados ou incompletos.","Gestão de credenciais desde o início — definir onde e como as credenciais do Supabase e do n8n serão armazenadas de forma segura. Credenciais soltas em planilhas ou emails criam risco operacional real.","n8n auto-hospedado vs. cloud — se o n8n ainda não estiver provisionado, a decisão entre versão self-hosted e cloud impacta custo, manutenção e permissões. Vale definir isso antes de começar a configuração."]},{"id":"s_doc_autoridade_01","color":"#6fda9e","area":"Sprint · Marketing / Comunicação / Martech","title":"Autoridade Digital com Agentes de IA","prob":"A Mandic opera com comunicação reativa, sem processo estruturado de pautas ou fluxo de produção intencional. A expertise interna — corpo docente, dados, casos clínicos — não é transformada em conteúdo, as inovações e atributos da instituição não chegam ao mercado de forma sistemática, e não existem métricas de autoridade digital (rankings, citações, share of voice em IA).","mvp":"Criar uma operação de conteúdo multicanal assistida por agentes de IA: pesquisa de pauta → briefing automático → geração por agente especializado por canal → revisão humana → publicação → monitoramento de autoridade (SEO + GEO + Altmetrics), cobrindo os canais de SEO/Blog, Branding, Documentações, Digital PR e UGC.","time":"5–6 semanas","complex":"Alta","impact":"Alto","resp":[],"deadline":"","done":false,"criteria":[{"id":"c_aut_01","text":"Inventário de conteúdo existente concluído (blog, YouTube, Help Desk, LinkedIn)","done":false},{"id":"c_aut_02","text":"Arquitetura de agentes definida: ao menos 5 agentes especializados por canal configurados e testados","done":false},{"id":"c_aut_03","text":"Fluxo de produção end-to-end documentado e aprovado pelo time de Comunicação","done":false},{"id":"c_aut_04","text":"12 conteúdos publicados com fluxo assistido por IA (ao menos 2 por canal)","done":false},{"id":"c_aut_05","text":"Ao menos 5 palavras-chave estratégicas na primeira página do Google (em 90 dias) [SEO]","done":false},{"id":"c_aut_06","text":"Marca citada em ≥ 3 plataformas de IA auditadas no inventário GEO inicial [GEO]","done":false},{"id":"c_aut_07","text":"Dashboard de autoridade digital ativo: SEO positions + GEO share of voice + Altmetrics","done":false},{"id":"c_aut_08","text":"Ao menos 3 especialistas da Mandic com perfil thought-leadership ativo (LinkedIn + artigos publicados) [TL]","done":false}],"steps":[{"id":"p_aut_01","action":"Inventário e auditoria de conteúdo [one-time]","detail":"Mapear todo conteúdo existente (blog, YouTube, Help Desk, LinkedIn). Identificar gaps por canal e por persona. IA categoriza e prioriza oportunidades de reaproveitamento e novos temas.","tools":"Screaming Frog, Search Console","done":false},{"id":"p_aut_02","action":"Orquestração de pauta com IA","detail":"Agente Orquestrador combina dados do Search Console (quick wins), tendências do setor, datas relevantes e objetivos de negócio. Gera clusters temáticos com priorização por canal e janela temporal.","tools":"Search Console API, Claude API (Agente Orquestrador)","done":false},{"id":"p_aut_03","action":"Briefing por agente especializado","detail":"Cada canal recebe seu brief formatado pelo agente especializado: SEO (keywords + estrutura + meta), PR (ângulo de pauta + veículos-alvo), TL (ghostwriting framework + referências), Docs (estrutura FAQ), UGC (roteiro de comunidade).","tools":"Claude API (5 agentes especializados)","done":false},{"id":"p_aut_04","action":"Geração de conteúdo + revisão humana","detail":"Agente escreve rascunho com base no brief. Revisor humano valida fatos, adiciona dados proprietários da Mandic, ajusta tom de voz. Revisão é inegociável — protege E-E-A-T e qualidade institucional.","tools":"Claude API, Surfer SEO (on-page)","done":false},{"id":"p_aut_05","action":"Publicação e monitoramento de autoridade","detail":"Publicação no CMS com campos SEO/GEO preenchidos. Dashboard mensal com posições SEO, share of voice em IAs generativas, Altmetrics e tráfego por conteúdo.","tools":"Search Console API, Looker Studio, Altmetrics","done":false}],"areas":"Marketing, Comunicação, Martech, TI / CMS, Corpo Docente (validação técnica), Comercial (alinhamento de pautas)","blocks":["SEO tem retorno em 3–6 meses, GEO em 4–8 semanas. TL e PR podem gerar visibilidade mais rápida. Alinhar expectativas com a diretoria desde o início.","Conteúdo 100% IA sem revisão prejudica o E-E-A-T do Google e a credibilidade institucional. Revisão humana é inegociável — especialmente para conteúdo médico/odontológico.","Sem Search Console configurado e com histórico, a orquestração de pauta fica limitada. Prioridade zero: configurar e validar acesso antes do Sprint.","Thought Leadership depende de disponibilidade do corpo docente e lideranças. Criar processo leve (IA faz 80%, especialista valida em 20 min) para maximizar adesão.","Ferramentas de GEO analytics (Profound, Otterly.ai) ainda em maturação. Reservar 2–3h quinzenais para processo manual até automação disponível.","Com múltiplos agentes em produção, risco de inconsistência de tom de voz entre canais. Definir brand guidelines como contexto fixo em todos os agentes."]},{"id":"s_doc_revmgmt_01","color":"#fb923c","area":"Sprint · Marketing / RevOps","title":"Revenue Management com IA","prob":"Falta de visibilidade unificada do ciclo de receita — dados fragmentados entre marketing, comercial e financeiro impedem decisões rápidas, previsibilidade de pipeline e identificação de gargalos de conversão entre etapas do funil.","mvp":"Criar um hub centralizado de Revenue Management que conecta dados de marketing (captação), CRM (pipeline comercial) e financeiro (matrícula/receita), com IA gerando insights quinzenais automatizados sobre performance do funil, previsão de receita e recomendações de ação para os times de marketing e comercial — permitindo reuniões de decisão baseadas em dados consolidados em vez de planilhas manuais.","time":"2–3 semanas","complex":"Alta","impact":"Alto","resp":[],"deadline":"","done":false,"criteria":[{"id":"c_rev_01","text":"Dashboard unificado com funil completo (MQL → SQL → Oportunidade → Matrícula) atualizado em D-1","done":false},{"id":"c_rev_02","text":"Relatório quinzenal automatizado com insights gerados por IA entregue aos stakeholders","done":false},{"id":"c_rev_03","text":"Previsão de receita (forecast) com margem de erro ≤ 15% no ciclo de matrícula","done":false},{"id":"c_rev_04","text":"Sistema de alertas automáticos para desvios de meta por curso/canal/etapa","done":false}],"steps":[{"id":"p_rev_01","action":"Ingestão e unificação de dados de receita","detail":"Pipeline de ETL que consolida dados de Google Ads, Meta Ads, RD Station/HubSpot (marketing), CRM comercial e sistema acadêmico/financeiro (matrículas) em um data warehouse único. Normalização de campos e deduplicação de leads cross-canal.","tools":"BigQuery, RD Station API, ETL pipeline","done":false},{"id":"p_rev_02","action":"Modelagem do funil de receita unificado","detail":"Construção da tabela mestre do funil com etapas mapeadas (Visitante → Lead → MQL → SQL → Oportunidade → Matrícula → Receita realizada). Cálculo de taxas de conversão por etapa, canal, curso e período.","tools":"SQL, Modelo dimensional, Attribution modeling","done":false},{"id":"p_rev_03","action":"Dashboard de Revenue em tempo real","detail":"Painel executivo com visão consolidada: pipeline aberto, forecast do mês, comparativo vs. meta, ticket médio, CAC por canal, LTV por curso e velocidade do funil. Filtros por unidade, curso e período.","tools":"Power BI / Metabase, Refresh diário","done":false},{"id":"p_rev_04","action":"Geração de insights quinzenais com IA","detail":"Agente de IA analisa variações do funil, identifica gargalos (ex: queda de conversão MQL→SQL em curso X), detecta anomalias e gera relatório executivo com diagnóstico + 3 recomendações acionáveis para marketing e comercial.","tools":"GPT-4o API, Claude API, Prompt versionado no Git","done":false},{"id":"p_rev_05","action":"Forecast de receita com Machine Learning","detail":"Modelo preditivo que projeta matrículas e receita para os próximos 30/60/90 dias baseado em pipeline atual, sazonalidade histórica e velocidade de conversão. Intervalo de confiança exibido no dashboard.","tools":"Python, Revisão humana obrigatória","done":false},{"id":"p_rev_06","action":"Ritual quinzenal e alertas automatizados","detail":"Relatório consolidado enviado via Teams/e-mail para liderança a cada 15 dias com agenda de decisão pré-montada. Alertas automáticos disparam quando KPIs saem do intervalo aceitável (ex: CAC > limite, conversão < baseline).","tools":"MS Teams Webhook, SendGrid / Email","done":false}],"areas":"Marketing, Comercial, RevOps, BI / TI (integrações)","blocks":["Qualidade dos dados de entrada é crítica — CRM desatualizado ou leads mal classificados distorcem todo o funil; limpeza prévia é pré-requisito.","Integração entre sistemas legados (acadêmico/financeiro) pode demandar desenvolvimento custom — avaliar APIs disponíveis antes do sprint.","Atribuição multi-canal é complexa — definir modelo de atribuição (last-click, linear, data-driven) com stakeholders antes de construir dashboards.","Insights de IA precisam de curadoria nos primeiros ciclos — sem feedback humano, recomendações podem não refletir nuances do negócio educacional."]}],"enablers":[{"id":"s_1776966014672_gtwv","icon":"🖼️","name":"Banco de Imagens com Design System","desc":"Biblioteca curada de imagens aprovadas, organizadas por tema, formato e campanha. Com guia de uso de cores, tipografia e espaçamentos. Habilita: Sprints 1 e 2.","done":false,"resp":[],"steps":[]},{"id":"s_1776966014672_uh86","icon":"📋","name":"Templates de Criativos Versionados","desc":"Conjunto de templates no Canva/Figma por formato (feed, stories, display) com campos dinâmicos mapeados. Revisados e aprovados pelo design antes do fluxo de IA.","done":false,"resp":[],"steps":[]},{"id":"s_1776966014672_cnqg","icon":"🔌","name":"Documentação de APIs e Endpoints","desc":"Documentar acesso e autenticação de: CRM, Zendesk, plataformas de mídia, CMS. Inclui endpoints disponíveis, limites de rate, campos retornados.","done":false,"resp":[],"steps":[]},{"id":"s_1776966014672_gs63","icon":"📊","name":"Data Layer & UTM Padronizado","desc":"Definir e documentar estrutura de UTMs obrigatória. Implementar data layer GTM no site. Habilita: Sprints 2, 3 e 7.","done":false,"resp":[],"steps":[]},{"id":"s_1776966014672_0bmq","icon":"🏷️","name":"Naming Convention de Campanhas","desc":"Padrão obrigatório de nomenclatura para campanhas, ad sets e anúncios em todas as plataformas. Sem isso, análise cross-plataforma da Sprint 3 fica comprometida.","done":false,"resp":[],"steps":[]},{"id":"s_1776966014672_sl58","icon":"📝","name":"Biblioteca de Componentes de LP","desc":"Conjunto de blocos/seções pré-aprovados para landing pages. Criados pelo design, implementados no CMS. Habilita: Sprint 2.","done":false,"resp":[],"steps":[]},{"id":"s_1776966014672_smzg","icon":"🔐","name":"Política de Uso de IA & LGPD","desc":"Documento interno definindo quais dados podem ser enviados para APIs de IA externas, regras de anonimização e política de retenção de dados processados.","done":false,"resp":[],"steps":[]},{"id":"s_1776966014672_d46r","icon":"📚","name":"Glossário de Audiências & Segmentos","desc":"Definição padronizada das audiências usadas nas plataformas de mídia — nomes, critérios de inclusão, tamanho estimado. Habilita: Sprint 3.","done":false,"resp":[],"steps":[]},{"id":"s_1777048846937_bikd","icon":"🧩","name":"Integrações com Sistemas e Camada de Execução","desc":"Construir camada de integração unificada (API gateway) sobre os sistemas SLM principais e de parceiros (ex: Zendesk, INDECX), operacionalizar WABA com custos auditados, configurar Zendesk com read/write/webhook, decidir a ferramenta source of truth de régua e garantir reversibilidade para toda ação executada por IA. Habilita: Sprints 8, 9 e 11.","resp":[],"steps":[],"done":false},{"id":"s_1777049168517_fw1b","icon":"📊","name":"Baseline, Métricas de Programa e ROI","desc":"Documentar baseline de todas as métricas que o programa vai impactar (TMA, SLA, retenção, NPS, CSAT, CPA, deflexão, taxa de recuperação), estabelecer métricas intermediárias por sprint antes do início, construir dashboard consolidado do programa de IA e definir critério explícito de kill/continue por sprint. Habilita: Sprints 8, 9, 10 e 11.","resp":[],"steps":[],"done":false},{"id":"s_1777049239447_8p7y","icon":"📋","name":"Taxonomias, Ontologias e Brand Voice","desc":"Construir o conjunto de artefatos de linguagem (taxonomias de cancelamento, detrator e intenções; tags de template; brand voice documentada com exemplos positivos e negativos) com processo definido de revisão e atualização. Habilita: Sprints 9 e 10.","resp":[],"steps":[],"done":false},{"id":"s_1777049306033_ea33","icon":"📚","name":"Squad, Papéis e Governança","desc":"Constituir squad dedicado com papéis nomeados (data engineer, ML/AI engineer, prompt engineer, UX, PO), comitê de governança com cadência definida, sponsor executivo com mandato sobre orçamento e prioridade.","resp":[],"steps":[],"done":false},{"id":"s_1777049324448_ghn7","icon":"💡","name":"Adoção, Change Management e Treinamento","desc":"Estruturar programa de adoção em paralelo às sprints, com treinamento por papel, narrativa consistente de IA como estagiário nunca como substituto, canais de feedback do usuário final alimentando ajuste de prompt, rituais de retrô e ajuste, e métricas de adoção real.","resp":[],"steps":[],"done":false}]};
+
+// ── CORE STATE ──
+let sprints = [], enablers = [], curPage = 'overview', editing = false;
+
+// ══════════════════════════════════════
+// STORAGE — Google Apps Script
+// ══════════════════════════════════════
+
+// Raw fetch wrapper — returns parsed record or null
+async function jbGet() {
+  try {
+    const url = SCRIPT_URL + '?token=' + encodeURIComponent(TOKEN) + '&t=' + Date.now();
+    const r   = await fetch(url, { method: 'GET', redirect: 'follow' });
+    if (!r.ok) { console.error('[GAS] GET', r.status); return null; }
+    const txt = await r.text();
+    if (!txt || txt.trim() === '' || txt.trim() === '{}') return null;
+    const d = JSON.parse(txt);
+    if (d && Array.isArray(d.sprints) && d.sprints.length) return d;
+    return null;
+  } catch(e) { console.error('[GAS] GET error:', e.message); return null; }
+}
+
+
+async function jbPut(payload) {
+  const CHUNK  = 45000;
+  const full   = JSON.stringify(payload);
+  const chunk1 = full.slice(0, CHUNK);
+  const chunk2 = full.slice(CHUNK);
+  console.log('[GAS] POST FormData', Math.round(full.length/1024) + 'KB');
+
+  // Use FormData — simple multipart request, bypasses CORS preflight with no-cors
+  // GAS reads fields via e.parameter.chunk1, e.parameter.chunk2, e.parameter.token
+  const form = new FormData();
+  form.append('token',  TOKEN);
+  form.append('chunk1', chunk1);
+  form.append('chunk2', chunk2);
+
+  try {
+    await fetch(SCRIPT_URL, { method: 'POST', body: form, mode: 'no-cors' });
+    console.log('[GAS] POST sent');
+    return true;
+  } catch(e) {
+    console.error('[GAS] POST error:', e);
+    showError('Falha de rede: ' + e.message);
+    return false;
+  }
+}
+
+
+function parseRec(rec) {
+  if (!rec) return null;
+  if (Array.isArray(rec) && rec.length) return { sprints: rec, enablers: [], savedAt: null };
+  if (rec.sprints && rec.sprints.length) return {
+    sprints:  rec.sprints,
+    enablers: rec.enablers || [],
+    savedAt:  rec._savedAt || null
+  };
+  return null;
+}
+
+async function save() {
+  clearTimeout(saveT); saveT = null;
+
+  // GET server first (merge concurrent additions)
+  const rec = await jbGet();
+  const srv = parseRec(rec);
+
+  // Local wins for existing IDs; add server-only items
+  const ms = [...sprints];
+  const me = [...enablers];
+  if (srv) {
+    for (const ss of srv.sprints)  { if (!ms.find(x=>x.id===ss.id)) ms.push(ss); }
+    for (const se of srv.enablers) { if (!me.find(x=>x.id===se.id)) me.push(se); }
+  }
+  sprints  = ms;
+  enablers = me;
+
+  const now = new Date().toISOString();
+  const ok  = await jbPut({ sprints, enablers, _savedAt: now });
+
+  if (ok) {
+    lastServerSavedAt = now;
+    showSaved();
+    renderSidebar();
+  } else {
+    // showError already called inside jbPut
+  }
+}
+
+async function load() {
+  // 1. Show seed immediately
+  sprints  = defaults();
+  enablers = defaultEnablers();
+  renderSidebar();
+  renderMain();
+
+  // 2. Fetch server and replace
+  const rec = await jbGet();
+  const srv = parseRec(rec);
+  if (srv) {
+    sprints  = srv.sprints;
+    enablers = srv.enablers.length ? srv.enablers : defaultEnablers();
+    lastServerSavedAt = srv.savedAt;
+    renderSidebar();
+    renderMain();
+  }
+}
+
+// ── Test connection (called from sidebar button) ──
+async function testSave() {
+  const btn = document.getElementById('test-save-btn');
+  if (btn) { btn.textContent = 'Testando...'; btn.disabled = true; }
+  // write a tiny marker
+  const marker = { _test: true, _t: Date.now(), sprints: sprints.slice(0,1).map(s=>({id:s.id,title:s.title})), enablers: [], _savedAt: new Date().toISOString(), token: TOKEN };
+  const body = JSON.stringify(marker);
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body,
+      mode: 'no-cors'
+    });
+    // no-cors: can't read response, wait then verify with GET
+    await new Promise(res => setTimeout(res, 2000));
+    // read back
+    const rr = await fetch(SCRIPT_URL + '?token=' + TOKEN, { redirect: 'follow' });
+    const tr = await rr.json();
+    if (tr.record && tr.record._test) {
+      alert('Round-trip OK!\nEscrita e leitura funcionando.\nAgora restaurando dados reais...');
+      // restore real data
+      await save();
+    } else {
+      alert('PROBLEMA: escrita retornou 200 mas leitura nao refletiu o dado.\n' + JSON.stringify(tr).slice(0,200));
+    }
+  } catch(e) {
+    alert('Erro de rede: ' + e.message);
+  }
+  if (btn) { btn.textContent = '🔬 Testar Save'; btn.disabled = false; }
+}
+
+async function testConnection() {
+  const btn = document.getElementById('test-conn-btn');
+  if (btn) { btn.textContent = 'Testando...'; btn.disabled = true; }
+  const rec = await jbGet();
+  if (btn) { btn.textContent = '⚡ Testar Conexão'; btn.disabled = false; }
+  if (rec && rec.sprints) {
+    alert('Conexao OK — ' + rec.sprints.length + ' sprints, salvo em ' + (rec._savedAt||'?'));
+  } else {
+    alert('Falha ao conectar ao Apps Script.\nVerifique o console (F12).\nURL: ' + SCRIPT_URL.slice(0,60) + '...');
+  }
+}
+let saveT;
+function qsave() { clearTimeout(saveT); saveT = setTimeout(save, 800); }
+let siT;
+function showSaved() {
+  const el = document.getElementById('si');
+  el.textContent = 'Salvo ✓'; el.style.color = 'var(--ok)';
+  el.classList.add('show'); clearTimeout(siT);
+  siT = setTimeout(() => el.classList.remove('show'), 2000);
+}
+function showError(msg) {
+  const el = document.getElementById('si');
+  el.textContent = msg ? ('✕ ' + msg.slice(0, 60)) : '✕ Erro ao salvar';
+  el.style.color = 'var(--a4)'; el.style.background = 'rgba(255,124,91,.15)';
+  el.classList.add('show'); clearTimeout(siT);
+  siT = setTimeout(() => {
+    el.classList.remove('show');
+    el.style.color = 'var(--ok)';
+    el.style.background = '';
+  }, 8000);
+}
+
+// ── AUTO-REFRESH (poll every 30s for changes from other users) ──
+let lastServerSavedAt = null;
+let refreshPaused = false;
+
+async function pollRemote() {
+  if (refreshPaused || editing || saveT) return;
+  const rec = await jbGet();
+  const srv = parseRec(rec);
+  if (!srv) return;
+  if (srv.savedAt && srv.savedAt === lastServerSavedAt) return; // no change
+  lastServerSavedAt = srv.savedAt;
+  sprints    = srv.sprints;
+  enablers   = srv.enablers.length ? srv.enablers : enablers;
+  _snapshots = srv.snapshots;
+  renderSidebar();
+  if (!editing) renderMain();
+  showRefreshBadge();
+}
+
+let rbT;
+function showRefreshBadge() {
+  const el = document.getElementById('si');
+  el.textContent = '↻ Atualizado'; el.style.color = 'var(--ok)';
+  el.classList.add('show'); clearTimeout(rbT);
+  rbT = setTimeout(() => { el.classList.remove('show'); el.textContent = 'Salvo ✓'; }, 2500);
+}
+
+setInterval(pollRemote, 30000);
+document.addEventListener('focusin',  () => { refreshPaused = true; });
+document.addEventListener('focusout', () => { setTimeout(() => { refreshPaused = false; }, 2000); });
+
+// ══════════════════════════════════════
+// SIDEBAR
+// ══════════════════════════════════════
+function renderSidebar() {
+  const total=sprints.length, done=sprints.filter(s=>s.done).length;
+  let h = `<div class="sb-hdr"><div class="sb-logo">IA Sprints · SL Mandic</div><div class="sb-title">Marketing, Vendas<br>& CX</div></div>
+  <div class="sb-sec"><div class="sb-lbl">Visão Geral</div>
+  <div class="ni ${curPage==='overview'?'active':''}" onclick="nav('overview')"><span class="nd" style="background:#6b6d72"></span><span class="nl">Dashboard Geral</span><span style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace">${done}/${total}</span></div>
+  <div class="ni ${curPage==='transversal'?'active':''}" onclick="nav('transversal')"><span class="nd" style="background:#c084fc"></span><span class="nl">Entregas Transversais</span><span style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace">${enablers.filter(e=>e.done).length}/${enablers.length}</span></div>
+  </div><div class="sb-sec"><div class="sb-lbl">Sprints de IA</div>`;
+  sprints.forEach((s,i)=>{
+    const p = stepPct(s.steps);
+    h += `<div class="ni ${curPage===s.id?'active':''} ${s.done?'completed':''}" onclick="nav('${s.id}')">
+      <span class="nd" style="background:${s.color};opacity:${s.done?.45:1}"></span>
+      <span class="nl">S${i+1} · ${s.title.length>25?s.title.slice(0,25)+'…':s.title}</span>
+      ${s.done?'<span style="font-size:11px;color:var(--ok)">✓</span>':p>0?`<span style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace">${p}%</span>`:''}
+    </div>`;
+  });
+  h += `</div><div style="padding:4px 10px 10px"><div class="add-btn" onclick="openAddModal()"><span style="font-size:15px;line-height:1">+</span> Nova Sprint</div>
+  <div class="add-btn" onclick="openHistoryModal()" style="margin-top:2px"><span style="font-size:13px;line-height:1">↺</span> Histórico de Versões</div>
+  <div class="add-btn" id="test-conn-btn" onclick="testConnection()" style="margin-top:2px;color:var(--a3);border-color:rgba(111,218,158,.3)"><span style="font-size:12px;line-height:1">⚡</span> Testar Conexão</div>
+  <div class="add-btn" id="test-save-btn" onclick="testSave()" style="margin-top:2px;color:var(--accent);border-color:rgba(240,192,64,.3)"><span style="font-size:12px;line-height:1">🔬</span> Testar Save</div></div>\``;
+  document.getElementById('sb').innerHTML = h;
+}
+
+// ══════════════════════════════════════
+// NAVIGATE
+// ══════════════════════════════════════
+function nav(id) {
+  if (editing) { if (!confirm('Descartar alterações não salvas?')) return; editing=false; }
+  curPage=id; renderSidebar(); renderMain();
+  document.querySelector('.mn').scrollTo(0,0);
+}
+
+function renderMain() {
+  const mn = document.getElementById('mn');
+  if (curPage==='overview') { mn.innerHTML=renderOverview(); return; }
+  if (curPage==='transversal') { mn.innerHTML=renderTransversal(); return; }
+  const s = sprints.find(x=>x.id===curPage);
+  if (s) { mn.innerHTML = editing ? renderEdit(s) : renderView(s); return; }
+  curPage='overview'; mn.innerHTML=renderOverview();
+}
+
+// ══════════════════════════════════════
+// OVERVIEW
+// ══════════════════════════════════════
+let ovTab = 'cards'; // 'cards' | 'table'
+
+function switchOvTab(t) { ovTab=t; renderMain(); }
+
+function renderOverview() {
+  const total=sprints.length, done=sprints.filter(s=>s.done).length;
+  const wip=sprints.filter(s=>!s.done && s.steps.some(st=>st.done)).length;
+  const areas = new Set(sprints.flatMap(s=>s.areas.split(',').map(a=>a.trim())));
+
+  const header = `<div class="ov-h">
+    <div class="ov-lbl">Roadmap de IA · Time de Gestão</div>
+    <div class="ov-h1">Sprints de Soluções<br>com Inteligência Artificial</div>
+    <div class="ov-sub">${total} frentes priorizadas, cada uma com MVP definido, fluxo passo a passo, critérios de aceite e responsáveis.</div>
+    <div class="ov-stats">
+      <div class="stat"><span class="stn" style="color:var(--accent)">${total}</span><span class="stl">Sprints</span></div>
+      <div class="stat"><span class="stn" style="color:var(--ok)">${done}</span><span class="stl">Concluídas</span></div>
+      <div class="stat"><span class="stn" style="color:var(--accent)">${wip}</span><span class="stl">Em andamento</span></div>
+      <div class="stat"><span class="stn" style="color:var(--a2)">${areas.size}</span><span class="stl">Áreas</span></div>
+    </div>
+    <div class="ov-tabs">
+      <div class="ov-tab ${ovTab==='cards'?'active':''}" onclick="switchOvTab('cards')">Cards</div>
+      <div class="ov-tab ${ovTab==='table'?'active':''}" onclick="switchOvTab('table')">Painel de Avanço</div>
+    </div>
+  </div>`;
+
+  if (ovTab === 'table') return header + renderProgressTable();
+
+  // ── CARDS VIEW ──
+  let cards = sprints.map((s,i) => {
+    const p = stepPct(s.steps);
+    const tools = s.steps.flatMap(st=>st.tools.split(',').map(t=>t.trim())).slice(0,3);
+    const dl = s.deadline ? fmtDate(s.deadline) : null;
+    const respH = (s.resp||[]).slice(0,2).map(r=>`<span class="sc-badge">${esc(shortName(r))}</span>`).join('');
+    const moreResp = (s.resp||[]).length > 2 ? `<span class="sc-badge">+${(s.resp||[]).length-2}</span>` : '';
+    return `<div class="sc ${s.done?'sc-done':''}" onclick="nav('${s.id}')">
+      <div class="sc-tag" style="background:${s.color}22;color:${s.color}">S${i+1}</div>
+      <div class="sc-title">${esc(s.title)}</div>
+      <div class="sc-desc">${esc(s.prob)}</div>
+      ${(s.resp||[]).length?`<div class="sc-foot" style="margin-bottom:7px">${respH}${moreResp}</div>`:''}
+      <div class="sc-foot">
+        ${dl?`<span class="sc-badge" style="${dl.cls==='dl-over'?'color:var(--a4)':dl.cls==='dl-soon'?'color:var(--accent)':''}">📅 ${dl.str}</span>`:''}
+        ${s.done?'<span style="margin-left:auto;font-size:11px;color:var(--ok)">✓ Concluída</span>':p>0?`<span style="margin-left:auto;font-size:10px;color:var(--muted);font-family:'DM Mono',monospace">${p}%</span>`:''}
+      </div>
+      ${p>0&&!s.done?`<div class="pbar" style="margin-top:9px"><div class="pfill" style="width:${p}%"></div></div>`:''}
+    </div>`;
+  }).join('');
+  cards += `<div class="sc add-card" onclick="openAddModal()"><span style="font-size:26px;color:var(--border)">+</span><span style="font-size:12px;color:var(--muted)">Nova Sprint</span></div>`;
+  return header + `<div class="ov-grid">${cards}</div>`;
+}
+
+function renderProgressTable() {
+  const rows = sprints.map((s,i) => {
+    const sp = stepPct(s.steps);
+    const cp = critPct(s.criteria||[]);
+    const dl = s.deadline ? fmtDate(s.deadline) : null;
+    const resp = (s.resp||[]);
+
+    // status logic
+    let statusCls, statusLabel;
+    if (s.done) { statusCls='st-done'; statusLabel='✓ Concluída'; }
+    else if (dl && dl.cls==='dl-over') { statusCls='st-over'; statusLabel='⚠ Atrasada'; }
+    else if (sp>0||cp>0) { statusCls='st-wip'; statusLabel='● Em andamento'; }
+    else { statusCls='st-idle'; statusLabel='○ Não iniciada'; }
+
+    const dlCell = dl
+      ? `<span class="pt-deadline ${dl.cls}">${dl.str}</span>`
+      : `<span class="pt-no-dl">—</span>`;
+
+    const respCell = resp.length
+      ? `<div class="pt-resp">${resp.map(r=>`<span class="pt-chip">${esc(shortName(r))}</span>`).join('')}</div>`
+      : `<span style="font-size:12px;color:var(--muted)">—</span>`;
+
+    const critTotal = (s.criteria||[]).length;
+    const critDone  = (s.criteria||[]).filter(c=>c.done).length;
+
+    return `<tr class="pt-row ${s.done?'done-row':''}" onclick="nav('${s.id}')">
+      <td>
+        <div class="pt-sprint-name">
+          <div class="pt-dot" style="background:${s.color}"></div>
+          <div>
+            <div class="pt-title">${esc(s.title)}</div>
+            <div class="pt-area">${esc(s.area)}</div>
+          </div>
+        </div>
+      </td>
+      <td>${respCell}</td>
+      <td>${dlCell}</td>
+      <td>
+        <div class="pt-prog-wrap">
+          <div class="pt-prog-row">
+            <span class="pt-prog-lbl">Passos</span>
+            <div class="pt-bar"><div class="pt-bar-fill" style="width:${sp}%;background:var(--ok)"></div></div>
+            <span class="pt-pct">${sp}%</span>
+          </div>
+          ${critTotal?`<div class="pt-prog-row">
+            <span class="pt-prog-lbl">Critérios</span>
+            <div class="pt-bar"><div class="pt-bar-fill" style="width:${cp}%;background:var(--a2)"></div></div>
+            <span class="pt-pct">${critDone}/${critTotal}</span>
+          </div>`:''}
+        </div>
+      </td>
+      <td><span class="pt-status ${statusCls}">${statusLabel}</span></td>
+    </tr>`;
+  }).join('');
+
+  // summary footer
+  const totalDone = sprints.filter(s=>s.done).length;
+  const totalWip  = sprints.filter(s=>!s.done && (stepPct(s.steps)>0||critPct(s.criteria||[])>0)).length;
+  const totalOver = sprints.filter(s=>!s.done && s.deadline && fmtDate(s.deadline).cls==='dl-over').length;
+  const avgStep   = sprints.length ? Math.round(sprints.reduce((a,s)=>a+stepPct(s.steps),0)/sprints.length) : 0;
+
+  return `<div class="pt-wrap">
+    <div style="display:flex;gap:10px;margin-bottom:22px;flex-wrap:wrap">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 18px;display:flex;flex-direction:column;gap:3px">
+        <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Progresso Médio</span>
+        <span style="font-size:22px;font-weight:700;color:var(--ok)">${avgStep}%</span>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 18px;display:flex;flex-direction:column;gap:3px">
+        <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Concluídas</span>
+        <span style="font-size:22px;font-weight:700;color:var(--ok)">${totalDone} <span style="font-size:14px;color:var(--muted)">/ ${sprints.length}</span></span>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 18px;display:flex;flex-direction:column;gap:3px">
+        <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Em Andamento</span>
+        <span style="font-size:22px;font-weight:700;color:var(--accent)">${totalWip}</span>
+      </div>
+      ${totalOver?`<div style="background:rgba(255,124,91,.06);border:1px solid rgba(255,124,91,.25);border-radius:8px;padding:12px 18px;display:flex;flex-direction:column;gap:3px">
+        <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--a4)">Prazo Vencido</span>
+        <span style="font-size:22px;font-weight:700;color:var(--a4)">${totalOver}</span>
+      </div>`:''}
+    </div>
+    <table class="pt-table">
+      <thead>
+        <tr>
+          <th>Sprint</th>
+          <th>Responsáveis</th>
+          <th>Prazo</th>
+          <th style="min-width:180px">Progresso</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+// ══════════════════════════════════════
+// VIEW
+// ══════════════════════════════════════
+function renderView(s) {
+  const p=stepPct(s.steps), cp=critPct(s.criteria||[]);
+  const dl=s.deadline?fmtDate(s.deadline):null;
+  const areas=s.areas.split(',').map(a=>a.trim()).filter(Boolean);
+  const criteria=s.criteria||[];
+  const critDone=criteria.filter(c=>c.done).length;
+
+  const respH = s.resp&&s.resp.length
+    ? s.resp.map(r=>`<span class="chip">${esc(shortName(r))}</span>`).join('')
+    : `<span style="font-size:12px;color:var(--muted)">—</span>`;
+  const dlH = dl
+    ? `<span class="mv ${dl.cls}">${dl.str}</span>`
+    : `<span style="font-size:12px;color:var(--muted)">—</span>`;
+
+  const stepsH = s.steps.map((st,i)=>{
+    const tags = st.tools.split(',').map(t=>t.trim()).filter(Boolean).map(t=>`<span class="tag ${tagType(t)}">${esc(t)}</span>`).join('');
+    return `<div class="fs">
+      <div class="fl">
+        <div class="sn ${st.done?'done':''}" onclick="toggleStep('${s.id}','${st.id}')" title="${st.done?'Marcar pendente':'Marcar concluído'}">${st.done?'✓':i+1}</div>
+        <div class="fline"></div>
+      </div>
+      <div class="fc ${st.done?'sdone':''}">
+        <div class="fa">${esc(st.action)}</div>
+        <div class="fd">${esc(st.detail)}</div>
+        <div class="ftags">${tags}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const critH = criteria.length ? criteria.map(c=>`
+    <div class="crit-item ${c.done?'crit-done':''}" onclick="toggleCrit('${s.id}','${c.id}')">
+      <div class="crit-check">${c.done?'✓':''}</div>
+      <div class="crit-text">${esc(c.text)}</div>
+    </div>`).join('') : `<div style="font-size:13px;color:var(--muted)">Nenhum critério definido. Clique em Editar para adicionar.</div>`;
+
+  return `<div class="ph">
+    <div class="ha">
+      <button class="btn btn-done ${s.done?'on':''}" onclick="toggleDone('${s.id}')">${s.done?'✓ Concluída':'Marcar Concluída'}</button>
+      <button class="btn" onclick="startEdit('${s.id}')">✎ Editar</button>
+      <button class="btn btn-del" onclick="delSprint('${s.id}')">Excluir</button>
+    </div>
+    <div class="pt" style="background:${s.color}22;color:${s.color}">${esc(s.area)}</div>
+    <div class="ptitle">${esc(s.title)}</div>
+    <div class="pprob">${esc(s.prob)}</div>
+    <div class="mr">
+      <div class="mi"><span class="ml">Prazo Estimado</span><span class="mv">${esc(s.time)}</span></div>
+      <div class="mi"><span class="ml">Complexidade</span><span class="mv">${esc(s.complex)}</span></div>
+      <div class="mi"><span class="ml">Impacto</span><span class="mv">${esc(s.impact)}</span></div>
+      ${p>0?`<div class="mi"><span class="ml">Passos</span><span class="mv" style="color:var(--ok)">${p}%</span></div>`:''}
+      ${criteria.length?`<div class="mi"><span class="ml">Critérios</span><span class="mv" style="color:${cp===100?'var(--ok)':'var(--text)'}">${critDone}/${criteria.length}</span></div>`:''}
+    </div>
+    <div class="rs">
+      <div class="rg"><span class="rl">Responsáveis</span>${respH}</div>
+      <div class="rg"><span class="rl">Prazo</span>${dlH}</div>
+      ${s.done?'<div class="done-badge">✓ Sprint Concluída</div>':''}
+    </div>
+    ${p>0?`<div class="pbar"><div class="pfill" style="width:${p}%"></div></div>`:''}
+  </div>
+  <div class="pb">
+    <div class="sec">
+      <div class="stitle">Hipótese de MVP</div>
+      <div class="mvp-box" style="border-left-color:${s.color}">${esc(s.mvp)}</div>
+    </div>
+    <div class="sec">
+      <div class="stitle">Critérios de Aceite — clique para marcar</div>
+      ${criteria.length?`<div class="crit-progress"><span class="crit-prog-label">${critDone} de ${criteria.length} concluídos</span><span class="crit-prog-n">${cp}%</span></div>`:''}
+      <div class="criteria-list">${critH}</div>
+    </div>
+    <div class="sec">
+      <div class="stitle">Fluxo Passo a Passo — clique no número para marcar conclusão</div>
+      <div class="flow">${stepsH}</div>
+    </div>
+    <div class="sec">
+      <div class="stitle">Áreas Envolvidas</div>
+      <div class="ag">${areas.map(a=>`<div class="ac">${esc(a)}</div>`).join('')}</div>
+    </div>
+    <div class="sec">
+      <div class="stitle">Gargalos & Riscos</div>
+      <div class="bl-list">${(s.blocks||[]).filter(Boolean).map(b=>`<div class="bl-item">${esc(b)}</div>`).join('')}</div>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════
+// EDIT
+// ══════════════════════════════════════
+function renderEdit(s) {
+  const colorsH = COLORS.map(c=>`<div class="cdot ${s.color===c?'sel':''}" style="background:${c}" onclick="pickColor('${c}',this)"></div>`).join('');
+  const stepsH = s.steps.map((st,i)=>`
+    <div class="e-step" id="es-${st.id}">
+      <div class="e-step-h"><span class="e-step-n">Passo ${i+1}</span><button class="sbtn del" onclick="rmStep('${s.id}','${st.id}')">✕ Remover</button></div>
+      <div class="field" style="margin-bottom:9px"><label class="fl-lbl">Ação</label><input class="fi" data-step="${st.id}" data-f="action" value="${esc(st.action)}"></div>
+      <div class="field" style="margin-bottom:9px"><label class="fl-lbl">Detalhe</label><textarea class="fi fi-ta" data-step="${st.id}" data-f="detail">${esc(st.detail)}</textarea></div>
+      <div class="field" style="margin-bottom:0"><label class="fl-lbl">Ferramentas / Plataformas (separadas por vírgula)</label><input class="fi" data-step="${st.id}" data-f="tools" value="${esc(st.tools)}"></div>
+    </div>`).join('');
+  const criteria = s.criteria||[];
+  const critH = criteria.map((c,i)=>`
+    <div class="crit-edit-row" id="cr-${c.id}">
+      <input class="fi" data-crit="${c.id}" value="${esc(c.text)}" placeholder="Ex: 10 criativos prontos em produção">
+      <button class="del-btn" onclick="rmCrit('${s.id}','${c.id}')">✕</button>
+    </div>`).join('');
+  const blocksH = (s.blocks||[]).map((b,i)=>`
+    <div class="b-row" id="bl-${i}">
+      <textarea class="fi fi-ta" data-bl="${i}" style="min-height:42px">${esc(b)}</textarea>
+      <button class="del-btn" onclick="document.getElementById('bl-${i}').remove()">✕</button>
+    </div>`).join('');
+
+  return `<div class="ph">
+    <div class="ha">
+      <button class="btn btn-save" onclick="saveEdit('${s.id}')">Salvar</button>
+      <button class="btn" onclick="cancelEdit()">Cancelar</button>
+    </div>
+    <div class="edit-bar">✎ Modo de Edição</div>
+    <div class="field" style="margin-bottom:9px"><label class="fl-lbl">Tag / Área</label><input class="fi" id="e-area" value="${esc(s.area)}"></div>
+    <div class="field" style="margin-bottom:9px"><label class="fl-lbl">Título da Sprint</label><input class="fi" id="e-title" value="${esc(s.title)}" style="font-size:17px;font-weight:700"></div>
+    <div class="field"><label class="fl-lbl">Cor</label><div class="cpicker" id="cpicker" data-sel="${s.color}">${colorsH}</div></div>
+  </div>
+  <div class="pb">
+    <div class="es">
+      <div class="es-lbl">Problema & MVP</div>
+      <div class="field" style="margin-bottom:9px"><label class="fl-lbl">Problema</label><textarea class="fi fi-ta" id="e-prob">${esc(s.prob)}</textarea></div>
+      <div class="field" style="margin-bottom:0"><label class="fl-lbl">Hipótese de MVP</label><textarea class="fi fi-ta" id="e-mvp" style="min-height:78px">${esc(s.mvp)}</textarea></div>
+    </div>
+    <div class="es">
+      <div class="es-lbl">Metadados</div>
+      <div class="f-row" style="margin-bottom:10px">
+        <div class="field" style="margin-bottom:0"><label class="fl-lbl">Prazo Estimado</label><input class="fi" id="e-time" value="${esc(s.time)}"></div>
+        <div class="field" style="margin-bottom:0"><label class="fl-lbl">Complexidade</label><input class="fi" id="e-complex" value="${esc(s.complex)}"></div>
+      </div>
+      <div class="f-row">
+        <div class="field" style="margin-bottom:0"><label class="fl-lbl">Impacto</label><input class="fi" id="e-impact" value="${esc(s.impact)}"></div>
+        <div class="field" style="margin-bottom:0"><label class="fl-lbl">Prazo (data)</label><input class="fi" id="e-deadline" type="date" value="${esc(s.deadline||'')}"></div>
+      </div>
+    </div>
+    <div class="es">
+      <div class="es-lbl">Responsáveis</div>
+      <div class="people-picker" id="pp-${s.id}">
+        <div class="pp-trigger" id="pp-trigger-${s.id}" onclick="togglePP('${s.id}')">
+          <div id="pp-chips-${s.id}" style="display:flex;flex-wrap:wrap;gap:4px;flex:1">${renderChips(s.resp||[], s.id)}</div>
+          <span class="pp-arrow">▾</span>
+        </div>
+        <div class="pp-dropdown" id="pp-dd-${s.id}" style="display:none">
+          <div class="pp-search"><input type="text" placeholder="Buscar..." oninput="filterPP('${s.id}',this.value)" id="pp-search-${s.id}"></div>
+          <div id="pp-opts-${s.id}">${renderPPOptions(s.resp||[], s.id)}</div>
+        </div>
+      </div>
+    </div>
+    <div class="es">
+      <div class="es-lbl">Critérios de Aceite</div>
+      <div id="crit-c-${s.id}">${critH}</div>
+      <button class="add-row-btn" onclick="addCrit('${s.id}')">+ Adicionar Critério</button>
+    </div>
+    <div class="es">
+      <div class="es-lbl">Passos do Fluxo</div>
+      <div id="steps-c">${stepsH}</div>
+      <button class="add-row-btn" onclick="addStep('${s.id}')">+ Adicionar Passo</button>
+    </div>
+    <div class="es">
+      <div class="es-lbl">Áreas Envolvidas (separadas por vírgula)</div>
+      <input class="fi" id="e-areas" value="${esc(s.areas)}">
+    </div>
+    <div class="es">
+      <div class="es-lbl">Gargalos & Riscos</div>
+      <div id="blocks-c">${blocksH}</div>
+      <button class="add-row-btn" onclick="addBlock()">+ Adicionar Gargalo</button>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════
+// PEOPLE PICKER
+// ══════════════════════════════════════
+let ppSelected = {}; // { sprintId: [name, ...] }
+let ppOpen = null;
+
+function initPP(sprintId, selected) {
+  ppSelected[sprintId] = [...(selected||[])];
+}
+
+function renderChips(selected, sprintId) {
+  if (!selected.length) return `<span class="pp-placeholder">Selecionar responsáveis...</span>`;
+  return selected.map(n=>`<span class="selected-chip">${esc(shortName(n))}<span class="rm" onclick="removePerson('${sprintId}','${esc(n)}',event)">×</span></span>`).join('');
+}
+
+function renderPPOptions(selected, sprintId, filter='') {
+  return PEOPLE.filter(p=>!filter||p.toLowerCase().includes(filter.toLowerCase())).map(p=>{
+    const sel = (ppSelected[sprintId]||[]).includes(p);
+    return `<div class="pp-option ${sel?'selected':''}" onclick="togglePerson('${sprintId}','${esc(p)}')">
+      <div class="pp-check">${sel?'✓':''}</div>
+      <span>${esc(p)}</span>
+    </div>`;
+  }).join('');
+}
+
+function togglePP(sprintId) {
+  const dd = document.getElementById('pp-dd-'+sprintId);
+  const trigger = document.getElementById('pp-trigger-'+sprintId);
+  if (dd.style.display==='none') {
+    if (ppOpen && ppOpen!==sprintId) {
+      document.getElementById('pp-dd-'+ppOpen).style.display='none';
+      document.getElementById('pp-trigger-'+ppOpen).classList.remove('open');
+    }
+    dd.style.display='block'; trigger.classList.add('open'); ppOpen=sprintId;
+    setTimeout(()=>{ const si=document.getElementById('pp-search-'+sprintId); if(si)si.focus(); },50);
+  } else {
+    dd.style.display='none'; trigger.classList.remove('open'); ppOpen=null;
+  }
+}
+
+function filterPP(sprintId, val) {
+  document.getElementById('pp-opts-'+sprintId).innerHTML = renderPPOptions(ppSelected[sprintId]||[], sprintId, val);
+}
+
+function togglePerson(sprintId, name) {
+  if (!ppSelected[sprintId]) ppSelected[sprintId]=[];
+  const idx = ppSelected[sprintId].indexOf(name);
+  if (idx>=0) ppSelected[sprintId].splice(idx,1);
+  else ppSelected[sprintId].push(name);
+  document.getElementById('pp-chips-'+sprintId).innerHTML = renderChips(ppSelected[sprintId], sprintId);
+  document.getElementById('pp-opts-'+sprintId).innerHTML = renderPPOptions(ppSelected[sprintId], sprintId, document.getElementById('pp-search-'+sprintId)?.value||'');
+}
+
+function removePerson(sprintId, name, e) {
+  e.stopPropagation();
+  if (!ppSelected[sprintId]) return;
+  ppSelected[sprintId] = ppSelected[sprintId].filter(n=>n!==name);
+  document.getElementById('pp-chips-'+sprintId).innerHTML = renderChips(ppSelected[sprintId], sprintId);
+}
+
+document.addEventListener('click', e => {
+  if (ppOpen && !e.target.closest('.people-picker')) {
+    const dd = document.getElementById('pp-dd-'+ppOpen);
+    const tr = document.getElementById('pp-trigger-'+ppOpen);
+    if (dd) dd.style.display='none';
+    if (tr) tr.classList.remove('open');
+    ppOpen=null;
+  }
+});
+
+// ══════════════════════════════════════
+// EDIT ACTIONS
+// ══════════════════════════════════════
+function startEdit(id) {
+  editing=true;
+  const s=sprints.find(x=>x.id===id); if(!s)return;
+  initPP(id, s.resp||[]);
+  renderMain();
+}
+function cancelEdit(){ editing=false; ppOpen=null; renderMain(); }
+function pickColor(c,el){ document.getElementById('cpicker').dataset.sel=c; document.querySelectorAll('#cpicker .cdot').forEach(d=>d.classList.remove('sel')); el.classList.add('sel'); }
+
+function saveEdit(id) {
+  const s=sprints.find(x=>x.id===id); if(!s)return;
+  s.area = document.getElementById('e-area').value.trim();
+  s.title = document.getElementById('e-title').value.trim();
+  s.color = document.getElementById('cpicker').dataset.sel;
+  s.prob = document.getElementById('e-prob').value.trim();
+  s.mvp = document.getElementById('e-mvp').value.trim();
+  s.time = document.getElementById('e-time').value.trim();
+  s.complex = document.getElementById('e-complex').value.trim();
+  s.impact = document.getElementById('e-impact').value.trim();
+  s.deadline = document.getElementById('e-deadline').value;
+  s.areas = document.getElementById('e-areas').value.trim();
+  s.resp = ppSelected[id]||[];
+  // steps
+  document.querySelectorAll('[data-step]').forEach(el=>{
+    const st=s.steps.find(x=>x.id===el.dataset.step); if(st)st[el.dataset.f]=el.value;
+  });
+  // criteria
+  s.criteria = Array.from(document.querySelectorAll('[data-crit]')).map(el=>{
+    const existing = (s.criteria||[]).find(c=>c.id===el.dataset.crit);
+    return { id:el.dataset.crit, text:el.value.trim(), done:existing?existing.done:false };
+  }).filter(c=>c.text);
+  // blocks
+  s.blocks = Array.from(document.querySelectorAll('[data-bl]')).map(el=>el.value.trim()).filter(Boolean);
+  editing=false; ppOpen=null; qsave(); renderSidebar(); renderMain();
+}
+
+function addStep(sprintId) {
+  const s=sprints.find(x=>x.id===sprintId); if(!s)return;
+  const step={id:pid(),action:'Novo passo',detail:'Descreva o que acontece neste passo...',tools:'',done:false};
+  s.steps.push(step);
+  const c=document.getElementById('steps-c'); if(!c)return;
+  const i=s.steps.length-1;
+  const div=document.createElement('div');
+  div.innerHTML=`<div class="e-step" id="es-${step.id}">
+    <div class="e-step-h"><span class="e-step-n">Passo ${i+1}</span><button class="sbtn del" onclick="rmStep('${sprintId}','${step.id}')">✕ Remover</button></div>
+    <div class="field" style="margin-bottom:9px"><label class="fl-lbl">Ação</label><input class="fi" data-step="${step.id}" data-f="action" value="${esc(step.action)}"></div>
+    <div class="field" style="margin-bottom:9px"><label class="fl-lbl">Detalhe</label><textarea class="fi fi-ta" data-step="${step.id}" data-f="detail">${esc(step.detail)}</textarea></div>
+    <div class="field" style="margin-bottom:0"><label class="fl-lbl">Ferramentas / Plataformas (separadas por vírgula)</label><input class="fi" data-step="${step.id}" data-f="tools" value=""></div>
+  </div>`;
+  c.appendChild(div.firstElementChild);
+}
+
+function rmStep(sprintId,stepId) {
+  const s=sprints.find(x=>x.id===sprintId); if(!s)return;
+  s.steps=s.steps.filter(x=>x.id!==stepId);
+  const el=document.getElementById('es-'+stepId); if(el)el.remove();
+  document.querySelectorAll('#steps-c .e-step-n').forEach((el,i)=>{el.textContent=`Passo ${i+1}`;});
+}
+
+function addCrit(sprintId) {
+  const c=document.getElementById('crit-c-'+sprintId); if(!c)return;
+  const newId=cid();
+  const div=document.createElement('div');
+  div.className='crit-edit-row'; div.id=`cr-${newId}`;
+  div.innerHTML=`<input class="fi" data-crit="${newId}" value="" placeholder="Ex: 10 criativos prontos em produção">
+    <button class="del-btn" onclick="rmCritEl('${newId}')">✕</button>`;
+  c.appendChild(div);
+}
+
+function rmCrit(sprintId, critId) {
+  const el=document.getElementById('cr-'+critId); if(el)el.remove();
+}
+function rmCritEl(critId) {
+  const el=document.getElementById('cr-'+critId); if(el)el.remove();
+}
+
+function addBlock() {
+  const c=document.getElementById('blocks-c'); if(!c)return;
+  const idx=c.querySelectorAll('[data-bl]').length;
+  const div=document.createElement('div');
+  div.className='b-row'; div.id=`bl-${idx}`;
+  div.innerHTML=`<textarea class="fi fi-ta" data-bl="${idx}" style="min-height:42px" placeholder="Descreva o gargalo ou risco..."></textarea><button class="del-btn" onclick="this.parentElement.remove()">✕</button>`;
+  c.appendChild(div);
+}
+
+// ══════════════════════════════════════
+// TOGGLES
+// ══════════════════════════════════════
+function toggleStep(spId,stId){ const s=sprints.find(x=>x.id===spId); if(!s)return; const st=s.steps.find(x=>x.id===stId); if(!st)return; st.done=!st.done; qsave(); renderSidebar(); renderMain(); }
+function toggleCrit(spId,crId){ const s=sprints.find(x=>x.id===spId); if(!s)return; const cr=(s.criteria||[]).find(x=>x.id===crId); if(!cr)return; cr.done=!cr.done; qsave(); renderSidebar(); renderMain(); }
+function toggleDone(id){ const s=sprints.find(x=>x.id===id); if(!s)return; s.done=!s.done; qsave(); renderSidebar(); renderMain(); }
+function delSprint(id){ if(!confirm('Excluir esta sprint permanentemente?'))return; sprints=sprints.filter(s=>s.id!==id); curPage='overview'; qsave(); renderSidebar(); renderMain(); }
+
+// ══════════════════════════════════════
+// ADD SPRINT MODAL
+// ══════════════════════════════════════
+function openAddModal() {
+  const initColor = COLORS[Math.floor(Math.random()*COLORS.length)];
+  const dots = COLORS.map(c=>`<div class="cdot ${c===initColor?'sel':''}" style="background:${c}" onclick="this.parentElement.dataset.sel='${c}';this.parentElement.querySelectorAll('.cdot').forEach(d=>d.classList.remove('sel'));this.classList.add('sel')"></div>`).join('');
+  document.getElementById('mb').innerHTML=`
+    <div class="mh">+ Nova Sprint</div>
+    <div class="field"><label class="fl-lbl">Título da Sprint *</label><input class="fi" id="ns-title" placeholder="Ex: Automação de E-mail Marketing"></div>
+    <div class="field"><label class="fl-lbl">Tag / Área</label><input class="fi" id="ns-area" placeholder="Ex: Sprint 8 · Marketing / CRM"></div>
+    <div class="field"><label class="fl-lbl">Cor</label><div class="cpicker" id="ns-cp" data-sel="${initColor}">${dots}</div></div>
+    <div class="field"><label class="fl-lbl">Problema</label><textarea class="fi fi-ta" id="ns-prob" placeholder="Descreva o problema atual que esta sprint resolve..."></textarea></div>
+    <div class="field"><label class="fl-lbl">Hipótese de MVP</label><textarea class="fi fi-ta" id="ns-mvp" placeholder="Qual é a menor entrega que gera valor e prova o conceito?"></textarea></div>
+    <div class="f-row">
+      <div class="field" style="margin-bottom:0"><label class="fl-lbl">Prazo estimado</label><input class="fi" id="ns-time" placeholder="Ex: 3–4 semanas"></div>
+      <div class="field" style="margin-bottom:0"><label class="fl-lbl">Complexidade</label><input class="fi" id="ns-complex" placeholder="Ex: Média"></div>
+    </div>
+    <div class="f-row" style="margin-top:11px">
+      <div class="field" style="margin-bottom:0"><label class="fl-lbl">Impacto</label><input class="fi" id="ns-impact" placeholder="Ex: Alto"></div>
+      <div class="field" style="margin-bottom:0"><label class="fl-lbl">Prazo (data)</label><input class="fi" id="ns-deadline" type="date"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-save" onclick="createSprint()">Criar Sprint</button>
+    </div>`;
+  document.getElementById('ovm').classList.add('open');
+}
+
+function closeModal(){ document.getElementById('ovm').classList.remove('open'); }
+
+function createSprint() {
+  const title=document.getElementById('ns-title').value.trim();
+  if(!title){alert('O título é obrigatório.');return;}
+  const n=sprints.length+1;
+  const s={
+    id:uid(), color:document.getElementById('ns-cp').dataset.sel||COLORS[0],
+    area:document.getElementById('ns-area').value.trim()||`Sprint ${n}`,
+    title, prob:document.getElementById('ns-prob').value.trim(),
+    mvp:document.getElementById('ns-mvp').value.trim(),
+    time:document.getElementById('ns-time').value.trim()||'—',
+    complex:document.getElementById('ns-complex').value.trim()||'—',
+    impact:document.getElementById('ns-impact').value.trim()||'—',
+    deadline:document.getElementById('ns-deadline').value,
+    resp:[], done:false,
+    criteria:[],
+    steps:[{id:pid(),action:'Primeiro passo',detail:'Descreva o que acontece neste passo...',tools:'',done:false}],
+    areas:'', blocks:[]
+  };
+  sprints.push(s); curPage=s.id; editing=true;
+  initPP(s.id,[]);
+  closeModal(); save().then(()=>{ if(!editing) renderMain(); }); renderSidebar(); renderMain();
+}
+
+document.getElementById('ovm').addEventListener('click',e=>{if(e.target===document.getElementById('ovm'))closeModal();});
+
+// ══════════════════════════════════════
+// TRANSVERSAL — FULL CRUD
+// ══════════════════════════════════════
+function renderTransversal() {
+  const done = enablers.filter(e=>e.done).length;
+  const total = enablers.length;
+
+  const cards = enablers.map((e,i) => {
+    const steps = e.steps||[];
+    const sDone = steps.filter(s=>s.done).length;
+    const resp = e.resp||[];
+
+    const stepsH = steps.length ? `<div class="en-steps">
+      ${steps.map((s,si)=>`
+        <div class="en-step-row ${s.done?'sdone':''}" onclick="toggleEnStep('${e.id}','${s.id}')">
+          <span class="en-snum">${s.done?'✓':si+1}</span>
+          <span class="en-stext">${esc(s.text)}</span>
+          <span class="en-scheck">${s.done?'✓':'○'}</span>
+        </div>`).join('')}
+    </div>` : '';
+
+    const respH = resp.length
+      ? resp.map(r=>`<span class="en-chip">${esc(shortName(r))}</span>`).join('')
+      : `<span style="font-size:11px;color:var(--muted)">Sem responsável</span>`;
+
+    const progH = steps.length ? `<span style="font-family:'DM Mono',monospace;font-size:10px;color:${sDone===steps.length?'var(--ok)':'var(--muted)'};">${sDone}/${steps.length} passos</span>` : '';
+
+    return `<div class="en-card ${e.done?'en-done':''}">
+      <div class="en-card-top">
+        <div class="en-icon">${e.icon||'📋'}</div>
+        <div style="flex:1;min-width:0">
+          <div class="en-name">${esc(e.name)}</div>
+          <div class="en-desc">${esc(e.desc)}</div>
+        </div>
+      </div>
+      ${stepsH}
+      <div class="en-card-footer">
+        <div class="en-resp">${respH}</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${progH}
+          <div class="en-actions">
+            <button class="en-btn ok ${e.done?'on':''}" onclick="toggleEnDone('${e.id}')">${e.done?'✓ Pronto':'Marcar Pronto'}</button>
+            <button class="en-btn" onclick="openEnModal('${e.id}')">✎</button>
+            <button class="en-btn danger" onclick="deleteEnabler('${e.id}')">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const summaryH = `<div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 18px;display:flex;flex-direction:column;gap:3px">
+      <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Total</span>
+      <span style="font-size:22px;font-weight:700;color:var(--text)">${total}</span>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 18px;display:flex;flex-direction:column;gap:3px">
+      <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Prontos</span>
+      <span style="font-size:22px;font-weight:700;color:var(--ok)">${done} <span style="font-size:14px;color:var(--muted)">/ ${total}</span></span>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 18px;display:flex;flex-direction:column;gap:3px">
+      <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Em andamento</span>
+      <span style="font-size:22px;font-weight:700;color:var(--accent)">${enablers.filter(e=>!e.done&&(e.steps||[]).some(s=>s.done)).length}</span>
+    </div>
+  </div>`;
+
+  return `<div class="ph">
+    <div class="ha">
+      <button class="btn btn-save" onclick="openEnModal(null)">+ Novo Habilitador</button>
+    </div>
+    <div class="pt" style="background:rgba(192,132,252,.12);color:#c084fc">Entregas Transversais</div>
+    <div class="ptitle">Habilitadores para todas as Sprints</div>
+    <div class="pprob">Pré-requisitos críticos que desbloqueiam múltiplas sprints. Clique em ✎ para editar ou adicionar responsáveis e passo a passo de cada habilitador.</div>
+  </div>
+  <div class="pb">
+    ${summaryH}
+    <div class="sec">
+      <div class="stitle">Habilitadores — clique nos passos para marcar conclusão</div>
+      <div class="en-grid">${cards}</div>
+      <button class="add-row-btn" onclick="openEnModal(null)">+ Novo Habilitador</button>
+    </div>
+    <div class="divider"></div>
+    <div class="sec"><div class="stitle">Mentalidade de MVP</div>
+    <div class="hl-box">💡 <strong>Não espere tudo pronto para começar.</strong> As transversais devem desbloquear sprints gradualmente. Um pipeline imperfeito que funciona vale mais que um sistema perfeito que nunca sai do papel.</div></div>
+  </div>`;
+}
+
+// ── ENABLER MODAL ────────────────────
+function openEnModal(id) {
+  const e = id ? enablers.find(x=>x.id===id) : null;
+  const isNew = !e;
+  const steps = e ? (e.steps||[]) : [];
+  const resp  = e ? (e.resp||[])  : [];
+  const enId  = e ? e.id : uid();
+  if (!id) ppSelected[enId] = [];
+  else { ppSelected[enId] = [...resp]; initPP(enId, resp); }
+
+  const iconsH = ENABLER_ICONS.map(ic=>`<div class="icon-opt ${(e&&e.icon===ic)?'sel':''}" onclick="pickEnIcon('${ic}',this)">${ic}</div>`).join('');
+
+  const stepsH = steps.map((s,i)=>`
+    <div class="en-edit-step" id="ens-${s.id}">
+      <div class="en-edit-step-h">
+        <span class="e-step-n">Passo ${i+1}</span>
+        <button class="sbtn del" onclick="document.getElementById('ens-${s.id}').remove()">✕ Remover</button>
+      </div>
+      <input class="fi" data-enstep="${s.id}" value="${esc(s.text)}" placeholder="Descreva este passo...">
+    </div>`).join('');
+
+  document.getElementById('mb').innerHTML = `
+    <div class="mh">${isNew ? '+ Novo Habilitador' : '✎ Editar Habilitador'}</div>
+    <div class="field"><label class="fl-lbl">Ícone</label>
+      <div class="icon-picker" id="en-icon-picker" data-sel="${e?e.icon:'📋'}">${iconsH}</div>
+    </div>
+    <div class="field"><label class="fl-lbl">Nome *</label>
+      <input class="fi" id="en-name" value="${esc(e?e.name:'')}" placeholder="Ex: Banco de Imagens com Design System">
+    </div>
+    <div class="field"><label class="fl-lbl">Descrição</label>
+      <textarea class="fi fi-ta" id="en-desc" placeholder="Descreva o que é, por que importa e quais sprints habilita...">${esc(e?e.desc:'')}</textarea>
+    </div>
+    <div class="field"><label class="fl-lbl">Responsáveis</label>
+      <div class="people-picker" id="pp-${enId}">
+        <div class="pp-trigger" id="pp-trigger-${enId}" onclick="togglePP('${enId}')">
+          <div id="pp-chips-${enId}" style="display:flex;flex-wrap:wrap;gap:4px;flex:1">${renderChips(ppSelected[enId]||[], enId)}</div>
+          <span class="pp-arrow">▾</span>
+        </div>
+        <div class="pp-dropdown" id="pp-dd-${enId}" style="display:none">
+          <div class="pp-search"><input type="text" placeholder="Buscar..." oninput="filterPP('${enId}',this.value)" id="pp-search-${enId}"></div>
+          <div id="pp-opts-${enId}">${renderPPOptions(ppSelected[enId]||[], enId)}</div>
+        </div>
+      </div>
+    </div>
+    <div class="field"><label class="fl-lbl">Passo a Passo</label>
+      <div id="en-steps-c">${stepsH}</div>
+      <button class="add-row-btn" style="margin-top:4px" onclick="addEnStep()">+ Adicionar Passo</button>
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-save" onclick="saveEnModal('${enId}',${isNew})">${isNew?'Criar':'Salvar'}</button>
+    </div>`;
+
+  document.getElementById('ovm').classList.add('open');
+}
+
+function pickEnIcon(ic, el) {
+  document.getElementById('en-icon-picker').dataset.sel = ic;
+  document.querySelectorAll('#en-icon-picker .icon-opt').forEach(d=>d.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function addEnStep() {
+  const c = document.getElementById('en-steps-c'); if(!c) return;
+  const sid = uid();
+  const idx = c.querySelectorAll('.en-edit-step').length;
+  const div = document.createElement('div');
+  div.className = 'en-edit-step'; div.id = `ens-${sid}`;
+  div.innerHTML = `
+    <div class="en-edit-step-h">
+      <span class="e-step-n">Passo ${idx+1}</span>
+      <button class="sbtn del" onclick="document.getElementById('ens-${sid}').remove()">✕ Remover</button>
+    </div>
+    <input class="fi" data-enstep="${sid}" value="" placeholder="Descreva este passo...">`;
+  c.appendChild(div);
+}
+
+function saveEnModal(enId, isNew) {
+  const name = document.getElementById('en-name').value.trim();
+  if (!name) { alert('O nome é obrigatório.'); return; }
+
+  const steps = Array.from(document.querySelectorAll('[data-enstep]')).map(el=>({
+    id: el.dataset.enstep,
+    text: el.value.trim(),
+    done: isNew ? false : ((enablers.find(x=>x.id===enId)||{steps:[]}).steps||[]).find(s=>s.id===el.dataset.enstep)?.done || false
+  })).filter(s=>s.text);
+
+  if (isNew) {
+    enablers.push({
+      id: enId,
+      icon: document.getElementById('en-icon-picker').dataset.sel || '📋',
+      name,
+      desc: document.getElementById('en-desc').value.trim(),
+      resp: ppSelected[enId]||[],
+      steps,
+      done: false
+    });
+  } else {
+    const e = enablers.find(x=>x.id===enId); if(!e) return;
+    e.icon  = document.getElementById('en-icon-picker').dataset.sel || e.icon;
+    e.name  = name;
+    e.desc  = document.getElementById('en-desc').value.trim();
+    e.resp  = ppSelected[enId]||[];
+    e.steps = steps;
+  }
+  closeModal(); qsave(); renderSidebar(); renderMain();
+}
+
+function toggleEnDone(id) {
+  const e = enablers.find(x=>x.id===id); if(!e) return;
+  e.done = !e.done; qsave(); renderSidebar(); renderMain();
+}
+
+function toggleEnStep(enId, stepId) {
+  const e = enablers.find(x=>x.id===enId); if(!e) return;
+  const s = (e.steps||[]).find(x=>x.id===stepId); if(!s) return;
+  s.done = !s.done; qsave(); renderSidebar(); renderMain();
+}
+
+function deleteEnabler(id) {
+  if (!confirm('Excluir este habilitador permanentemente?')) return;
+  enablers = enablers.filter(e=>e.id!==id); qsave(); renderSidebar(); renderMain();
+}
+
+// ══════════════════════════════════════
+// HISTORY MODAL
+// ══════════════════════════════════════
+let _snapshots = [];
+
+async function openHistoryModal() {
+  const msg = 'Historico nao disponivel via Apps Script. Use Arquivo > Historico de versoes na planilha Google.';
+  document.getElementById('mb').innerHTML = '<div class="mh">&#8635; Hist&oacute;rico</div><div style="padding:20px;color:var(--muted);font-size:13px;text-align:center">' + msg + '</div><div class="mfoot"><button class="btn" onclick="closeModal()">Fechar</button></div>';
+  document.getElementById('ovm').classList.add('open');
+}
+function renderHistoryModal() {
+  if (!_snapshots.length) {
+    document.getElementById('mb').innerHTML = `
+      <div class="mh">↺ Histórico de Versões</div>
+      <div style="padding:16px 0;color:var(--muted);font-size:13px;text-align:center">
+        Nenhum snapshot disponível ainda.<br>
+        <span style="font-size:12px">Os últimos 5 estados serão preservados automaticamente a partir do próximo save.</span>
+      </div>
+      <div class="mfoot"><button class="btn" onclick="closeModal()">Fechar</button></div>`;
+    return;
+  }
+
+  const rows = _snapshots.map((snap, i) => {
+    const dt = new Date(snap._savedAt);
+    const dateStr = dt.toLocaleDateString('pt-BR', {day:'2-digit',month:'short',year:'numeric'});
+    const timeStr = dt.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+    const sprintCount   = (snap.sprints||[]).length;
+    const enablerCount  = (snap.enablers||[]).length;
+    const doneCount     = (snap.sprints||[]).filter(s=>s.done).length;
+    return `<div style="background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:14px 16px;margin-bottom:8px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">${dateStr} às ${timeStr}</div>
+          <div style="font-size:12px;color:var(--muted)">${sprintCount} sprints · ${doneCount} concluídas · ${enablerCount} habilitadores</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">
+            ${(snap.sprints||[]).map(s=>`<span style="font-size:10px;padding:1px 7px;background:${s.color}22;color:${s.color};border-radius:3px;font-family:'DM Mono',monospace">${esc(s.title.length>22?s.title.slice(0,22)+'…':s.title)}</span>`).join('')}
+          </div>
+        </div>
+        <button class="btn" style="flex-shrink:0;color:var(--accent);border-color:rgba(240,192,64,.3)" onclick="restoreSnapshot(${i})">Restaurar esta versão</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('mb').innerHTML = `
+    <div class="mh">↺ Histórico de Versões</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Últimas ${_snapshots.length} versão(ões) salvas automaticamente. Restaurar substitui o estado atual — uma cópia do estado atual é preservada como snapshot antes da restauração.</div>
+    ${rows}
+    <div class="mfoot"><button class="btn" onclick="closeModal()">Fechar</button></div>`;
+}
+
+async function restoreSnapshot(idx) {
+  if (!confirm('Restaurar esta versão? O estado atual será preservado como snapshot.')) return;
+  const snap = _snapshots[idx];
+  if (!snap) return;
+  sprints  = snap.sprints  || [];
+  enablers = snap.enablers || [];
+  closeModal();
+  await save(); // this will snapshot current before overwriting
+  renderSidebar();
+  renderMain();
+}
+const SESSION_KEY = 'ia_sprints_auth';
+
+// SHA-256 hash da senha correta (gerado offline — a senha em si nunca aparece no código)
+const PASSWORD_HASH = 'e405ccd6225c328ad7944dc896ca0853575324ce60f68486ceaf9fdbf1eed9c9';
+
+async function sha256(msg) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function doLogin() {
+  const val = document.getElementById('loginInput').value;
+  const hash = await sha256(val);
+  if (hash === PASSWORD_HASH) {
+    TOKEN = val; // senha vira o token em runtime — nunca esteve hardcoded
+    sessionStorage.setItem(SESSION_KEY, '1');
+    sessionStorage.setItem(SESSION_KEY + '_t', val); // preserva para reload da aba
+    document.getElementById('loginScreen').style.display = 'none';
+    init();
+  } else {
+    const err = document.getElementById('loginErr');
+    const box = document.getElementById('loginBox');
+    err.textContent = 'Senha incorreta. Tente novamente.';
+    box.classList.remove('login-shake');
+    void box.offsetWidth;
+    box.classList.add('login-shake');
+    document.getElementById('loginInput').value = '';
+    document.getElementById('loginInput').focus();
+    setTimeout(() => { err.textContent = ''; }, 3000);
+  }
+}
+
+function checkAuth() {
+  if (sessionStorage.getItem(SESSION_KEY) === '1') {
+    TOKEN = sessionStorage.getItem(SESSION_KEY + '_t') || '';
+    document.getElementById('loginScreen').style.display = 'none';
+    init();
+  } else {
+    setTimeout(() => document.getElementById('loginInput').focus(), 100);
+  }
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+async function init() {
+  await load(); // load() handles renderSidebar + renderMain internally
+}
+
+checkAuth();
+
+</script>
+</body>
+</html>
