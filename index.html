@@ -307,7 +307,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 // CONFIGURAÇÃO — SUBSTITUA AQUI
 // ══════════════════════════════════════
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxUwCa3kXgWPX3oPX3W-07v8MyDmQdDtaD3OUAIKNkQtAVuRYy6ndFNgST5dWiZCtjXcg/exec';
-const TOKEN      = 'sobreviver';
+// TOKEN não é mais definido aqui — preenchido em runtime após login
+let TOKEN = '';
 
 // ══════════════════════════════════════
 // PESSOAS
@@ -1449,12 +1450,21 @@ async function restoreSnapshot(idx) {
 }
 const SESSION_KEY = 'ia_sprints_auth';
 
-function doLogin() {
+// SHA-256 hash da senha correta (gerado offline — a senha em si nunca aparece no código)
+const PASSWORD_HASH = 'e405ccd6225c328ad7944dc896ca0853575324ce60f68486ceaf9fdbf1eed9c9';
+
+async function sha256(msg) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function doLogin() {
   const val = document.getElementById('loginInput').value;
-  // Simple obfuscated check — tool is internal, security via noindex meta tags
-  const ok = btoa(val) === btoa('sobreviver');
-  if (ok) {
+  const hash = await sha256(val);
+  if (hash === PASSWORD_HASH) {
+    TOKEN = val; // senha vira o token em runtime — nunca esteve hardcoded
     sessionStorage.setItem(SESSION_KEY, '1');
+    sessionStorage.setItem(SESSION_KEY + '_t', val); // preserva para reload da aba
     document.getElementById('loginScreen').style.display = 'none';
     init();
   } else {
@@ -1472,6 +1482,7 @@ function doLogin() {
 
 function checkAuth() {
   if (sessionStorage.getItem(SESSION_KEY) === '1') {
+    TOKEN = sessionStorage.getItem(SESSION_KEY + '_t') || '';
     document.getElementById('loginScreen').style.display = 'none';
     init();
   } else {
